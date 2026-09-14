@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombs Royale Launcher</title>
+    <style>
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            justify-content: center;
+            align-items: center; 
+            font-family: sans-serif;
+            background: transparent;
+        }
+        
+        /* Just the Green Button */
+        .green-btn { 
+            padding: 15px 35px; 
+            border-radius: 8px; 
+            border: none; 
+            background: #2ecc71; 
+            color: white; 
+            cursor: pointer; 
+            font-size: 18px; 
+            font-weight: bold; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            transition: 0.2s; 
+        }
+        .green-btn:hover { 
+            background: #27ae60; 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Only the Green Button -->
+    <button id="launchBtn" class="green-btn">Play Zombs Royale</button>
+
+    <script>
+        document.getElementById('launchBtn').addEventListener('click', function() {
+            const gameUrl = 'https://zombsroyale.io';
+
+            // 1. Open a clean new tab
+            const targetWindow = window.open('about:blank', '_blank');
+            if (!targetWindow) {
+                alert('Pop-up blocker detected. Please allow pop-ups to open the game.');
+                return;
+            }
+
+            const doc = targetWindow.document;
+
+            // 2. Create the full-screen iframe
+            const appFrame = doc.createElement('iframe');
+            appFrame.src = gameUrl;
+            appFrame.setAttribute('allowfullscreen', 'true');
+            appFrame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock');
+
+            // 3. Apply full-screen styles to the new tab
+            Object.assign(doc.body.style, {
+                margin: '0',
+                padding: '0',
+                height: '100vh',
+                width: '100vw',
+                overflow: 'hidden',
+                backgroundColor: '#000000'
+            });
+
+            Object.assign(appFrame.style, {
+                border: 'none',
+                width: '100%',
+                height: '100%',
+                margin: '0',
+                padding: '0'
+            });
+
+            // 4. Inject the game iframe into the new tab
+            doc.body.appendChild(appFrame);
+        });
+    </script>
+</body>
+</html>
