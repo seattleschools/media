@@ -1,0 +1,203 @@
+<!-- why does it say everything was made by notrexed  img/screenshot.png -->
+<!-- ^ idk prolly cause im cool or smth -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>wasm.rip</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="lowkey"></div>
+    <nav>
+      <div class="container">
+        <span>wasm.rip</span>
+        <div class="links">
+          <a href="#members">members</a>
+          <a href="#featured">ports</a>
+          <a href="#about">about</a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <div class="container">
+        <h1>wasm.rip</h1>
+       <section class="group-section" id="members">
+  <h2>members</h2>
+  <div class="group-grid">
+
+    
+    <a class="group-memb" href="https://github.com/shayderrr" target="_blank">
+      <img src="https://github.com/shayderrr.png" />
+      <span>shayder</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/woahhcrackers" target="_blank">
+      <img src="https://github.com/woahhcrackers.png" />
+      <span>crackers</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/cirsius" target="_blank">
+      <img src="https://github.com/cirsius.png" />
+      <span>cirsius</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/NotRexed" target="_blank">
+      <img src="img/rexed.webp" />
+      <span>NotRexed</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/q8j-dev" target="_blank">
+      <img src="https://github.com/q8j-dev.png" />
+      <span>q8j.</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/SomeRandomFella" target="_blank">
+      <img src="img/plank.webp" />
+      <span>sexyplankton</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/a1pl" target="_blank">
+      <img src="img/sansuke.png" />
+      <span>sunsuke</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/gurtmuncher" target="_blank">
+      <img src="https://github.com/gurtmuncher.png" />
+      <span>gurtmuncher</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/reeyuki" target="_blank">
+      <img src="img/reeyuki.png" />
+      <span>reeyuki</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/slqntdevss" target="_blank">
+      <img src="img/slqntimage.png" />
+      <span>slqnt</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/zx8s" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/214947125?v=4" />
+      <span>zxs</span>
+    </a>
+
+    <a class="group-memb" href="https://github.com/dashiellbenton" target="_blank">
+      <img src="img/dasherimg.png" />
+      <span>dasher</span>
+    </a>
+    
+    <a class="group-memb" href="https://github.com/mynamescrax" target="_blank">
+      <img src="https://github.com/mynamescrax.png" />
+      <span>crax</span>
+    </a>
+   <a class="group-memb" href="https://github.com/x8rr" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/266275506?s=400&u=7f2a9b2b9d6fa1d0bd30619ad34a92703f430012&v=4" />
+      <span>TS (plz dont @)</span>
+    </a>
+    <a class="group-memb" href="https://github.com/x8rr" target="_blank">
+      <img src="https://avatars.githubusercontent.com/u/159058655?v=4" />
+      <span>x8r</span>
+    </a>
+  </div>
+</section>
+        <section class="group-section" id="featured">
+          <div class="section-header">
+            <h2>featured ports</h2>
+            <button class="show-all-btn" id="toggle-all-ports">show all ports</button>
+          </div>
+          <div class="game-grid featured-grid"></div>
+        </section>
+
+        <section class="group-section" id="about">
+          <h2>about us</h2>
+          <p class="about-text">
+            a group of people on the internet, porting games, emulators, or
+            tools
+          </p>
+        </section>
+      </div>
+    </main>
+
+
+
+    <script>
+      const featuredHolder = document.querySelector(".featured-grid");
+      const toggleBtn = document.querySelector("#toggle-all-ports");
+
+      fetch("games.json")
+        .then((res) => res.json())
+        .then((games) => {
+          const byName = (a, b) =>
+            a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+
+          const featured = games.filter((g) => g.featured).sort(byName);
+          const rest = games.filter((g) => !g.featured).sort(byName);
+          const sorted = [...featured, ...rest];
+
+          let showingAll = false;
+
+          // the urge to just use innerhtml instead of ts
+
+          const renderInto = (holder, list) => {
+            holder.innerHTML = "";
+            list.forEach((game) => {
+              const gameThing = document.createElement("div");
+              gameThing.classList.add("game-card");
+
+              const gameImage = document.createElement("img");
+              gameImage.src = game.imageUrl;
+
+              const gameInfo = document.createElement("div");
+              gameInfo.classList.add("game-info");
+
+              const gameTitle = document.createElement("span");
+              gameTitle.classList.add("game-title");
+              gameTitle.textContent = game.name;
+
+              const gamePorter = document.createElement("span");
+              gamePorter.classList.add("game-desc"); // not rlly a desc but wtv(sexyplankton) -- maybe add one later? todolist prob ( shayder )
+              gamePorter.textContent = `port by ${game.porter}`;
+
+              gameInfo.appendChild(gameTitle);
+              gameInfo.appendChild(gamePorter);
+              gameThing.appendChild(gameImage);
+              gameThing.appendChild(gameInfo);
+
+              gameThing.addEventListener("click", () => {
+                window.open(game.gameUrl, "_blank");
+              });
+
+              holder.appendChild(gameThing);
+            });
+          };
+
+          renderInto(featuredHolder, featured);
+
+          toggleBtn.addEventListener("click", () => {
+            showingAll = !showingAll;
+            renderInto(featuredHolder, showingAll ? sorted : featured);
+            toggleBtn.textContent = showingAll ? "show featured" : "show all ports";
+            document.querySelector("#featured h2").textContent = showingAll ? "all ports" : "featured ports";
+          });
+        })
+        .catch(() => {
+          alert("hi, games failed to load, either someone fucked something up or idk");
+        });
+    
+    </script>
+
+    <footer>
+      <div class="container">
+        <a href="https://github.com/wasmdotrip">github</a> |
+        <a href="https://discord.gg/uubyGYPHQw">discord</a>
+        <div class="copyright">
+          © 2026 wasm.rip (hi guys its me crackers i made this site! &
+          sexyplankton) 
+      </div>
+    </footer>
+  </body>
+</html>
