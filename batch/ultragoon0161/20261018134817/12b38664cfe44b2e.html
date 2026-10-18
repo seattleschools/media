@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-align: center;
+            padding: 60px 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .action-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: #0076ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .action-btn:hover {
+            background-color: #005fd1;
+        }
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>App Portal</h2>
+        <p>Click below to open the application container cleanly in a detached document environment.</p>
+        <button id="launcher" class="action-btn">Initialize Container</button>
+    </div>
+
+    <script>
+        document.getElementById('launcher').addEventListener('click', function() {
+            
+            // 1. Establish the clean blank tab context first
+            const targetWindow = window.open('about:blank', '_blank');
+            
+            if (!targetWindow) {
+                alert('Pop-up blocker detected. Please allow pop-ups for this page to initialize.');
+                return;
+            }
+
+            // 2. Generate elements via DOM node creation
+            const doc = targetWindow.document;
+            const targetFrame = doc.createElement('iframe');
+            
+            targetFrame.src = "https://freezenova.com";
+            
+            // 3. Apply styles programmatically
+            Object.assign(doc.body.style, {
+                margin: '0',
+                padding: '0',
+                height: '100vh',
+                width: '100vw',
+                overflow: 'hidden',
+                backgroundColor: '#000000'
+            });
+
+            Object.assign(targetFrame.style, {
+                border: 'none',
+                width: '100%',
+                height: '100%',
+                margin: '0',
+                padding: '0'
+            });
+
+            targetFrame.setAttribute('allowfullscreen', 'true');
+            doc.body.appendChild(targetFrame);
+
+            // 4. Intercept the user closing or refreshing the tab
+            targetWindow.addEventListener('beforeunload', function (e) {
+                // Cancel the event as stated by the standard.
+                e.preventDefault();
+                // Chrome requires returnValue to be set to trigger the native browser confirmation box.
+                e.returnValue = '';
+            });
+        });
+    </script>
+
+</body>
+</html>
