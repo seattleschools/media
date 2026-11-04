@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="100%" height="100%"
+     viewBox="0 0 1920 1080"
+     preserveAspectRatio="xMidYMid slice"
+     style="background:#000">
+  <title>Geography — Slope</title>
+
+  <!-- Black backdrop (replaces html/body background:#000) -->
+  <rect x="0" y="0" width="1920" height="1080" fill="#000000"/>
+
+  <!-- Full-bleed game frame (replaces the fixed full-viewport <iframe>) -->
+  <foreignObject x="0" y="0" width="1920" height="1080">
+    <div xmlns="http://www.w3.org/1999/xhtml"
+         style="margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;">
+      <iframe src="https://truffled.env.pm/games/slope/index.html"
+              allowfullscreen="allowfullscreen"
+              style="display:block;width:100%;height:100%;border:0;background:#000;"></iframe>
+    </div>
+  </foreignObject>
+
+  <!-- Bottom-right logo, kept clickable -->
+  <a xlink:href="https://truffled.env.pm" target="_blank">
+    <image id="site-logo"
+           x="1755" y="905" width="150" height="150"
+           preserveAspectRatio="xMidYMid meet"
+           xlink:href="https://truffled.env.pm/png/logo.png"
+           href="https://truffled.env.pm/png/logo.png"
+           style="cursor:pointer"/>
+  </a>
+</svg>
