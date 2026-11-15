@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SGS OS</title></head>
+<body style="margin:0;background:#000;color:#fff;font:14px/1.5 ui-monospace,Consolas,'Courier New',monospace">
+<p id="status" style="padding:24px">sgs@os:~$ loading the latest SGS OS…</p>
+<script>
+(async()=>{
+ // ---- change these only if your repo or file changes ----
+ const repo='junifer-sgs/SGS-OS',file='index.html',marker='id="app-root"',key='sgsos-loader-last-commit';
+ // --------------------------------------------------------
+ let latest='',saved='';
+ try{saved=localStorage.getItem(key)||''}catch{}
+ try{
+  const r=await fetch('https://api.github.com/repos/'+repo+'/commits/main',{cache:'no-store',signal:AbortSignal.timeout(8000)});
+  if(r.ok){const data=await r.json();if(/^[a-f0-9]{40}$/.test(data.sha))latest=data.sha}
+ }catch{}
+ const refs=[...new Set([latest,/^[a-f0-9]{40}$/.test(saved)?saved:'','main'].filter(Boolean))];
+ for(const ref of refs){
+  for(const host of ['cdn.jsdelivr.net','fastly.jsdelivr.net','gcore.jsdelivr.net']){
+   try{
+    const r=await fetch('https://'+host+'/gh/'+repo+'@'+ref+'/'+file,{signal:AbortSignal.timeout(20000)});
+    if(!r.ok)continue;
+    const html=await r.text();
+    if(!/<html[\s>]/i.test(html)||!html.includes(marker))continue;
+    if(ref!=='main')try{localStorage.setItem(key,ref)}catch{}
+    document.open();document.write(html);document.close();return;
+   }catch{}
+  }
+ }
+ document.getElementById('status').textContent='SGS OS could not load. Check your connection and reload.';
+})();
+</script></body></html>
