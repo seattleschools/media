@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vertx</title>
+<style>
+:root{--bg:#0f1117;--card:#171a23;--ink:#eef0f7;--muted:#9aa1b5;--ac:#3B4BFF;--line:#262a37}
+@media (prefers-color-scheme: light){:root{--bg:#f6f7fb;--card:#fff;--ink:#141824;--muted:#5d6478;--line:#e3e6ef}}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+#l{position:fixed;inset:0;display:grid;place-items:center;padding:16px}
+#c{width:min(380px,100%);text-align:center}
+.logo{width:44px;height:44px;margin:0 auto 14px;border-radius:12px;background:var(--ac);display:grid;place-items:center;color:#fff;font:800 22px/1 system-ui,sans-serif}
+h1{font-size:18px;margin:0 0 18px;font-weight:700;letter-spacing:.2px}
+.b{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.p{height:100%;width:0;background:var(--ac);border-radius:99px;transition:width .12s linear}
+.t{margin-top:10px;color:var(--muted);font-size:13px;min-height:20px}
+button{margin-top:16px;font:600 14px system-ui,sans-serif;padding:9px 18px;border:0;border-radius:10px;background:var(--ac);color:#fff;cursor:pointer}
+button[hidden]{display:none}
+</style></head>
+<body><div id="l"><div id="c">
+  <div class="logo" aria-hidden="true">V</div>
+  <h1>Vertx</h1>
+  <div class="b" role="progressbar" aria-label="Loading Vertx" aria-valuemin="0" aria-valuemax="100"><div class="p" id="p"></div></div>
+  <div class="t" id="t" aria-live="polite">Loading…</div>
+  <button id="retry" type="button" hidden>Try again</button>
+</div></div>
+<script>
+// Vertx loader: one small file that loads the full, current Vertx from GitHub and opens it in
+// place. It runs from wherever this file is opened (file://), so Vertx keeps the same settings,
+// storage and chat sign-in as opening the full HTML file directly.
+// Only official jsDelivr hosts, GitHub and githack: whatever a source returns runs as Vertx.
+(() => {
+  const REPO = 'anc-w/vertx', BRANCH = 'main', FILE = 'vertx.html';
+  const SOURCES = [
+    'https://cdn.jsdelivr.net/gh/' + REPO + '@' + BRANCH + '/' + FILE,
+    'https://fastly.jsdelivr.net/gh/' + REPO + '@' + BRANCH + '/' + FILE,
+    'https://gcore.jsdelivr.net/gh/' + REPO + '@' + BRANCH + '/' + FILE,
+    'https://testingcf.jsdelivr.net/gh/' + REPO + '@' + BRANCH + '/' + FILE,
+    'https://quantil.jsdelivr.net/gh/' + REPO + '@' + BRANCH + '/' + FILE,
+    'https://originfastly.jsdelivr.net/gh/' + REPO + '@' + BRANCH + '/' + FILE,
+    'https://raw.githubusercontent.com/' + REPO + '/' + BRANCH + '/' + FILE,
+    'https://raw.githack.com/' + REPO + '/' + BRANCH + '/' + FILE,
+  ];
+  const CONNECT_MS = 15000, STALL_MS = 20000, EST = 4.6 * 1048576;
+  const p = document.getElementById('p'), t = document.getElementById('t'), retry = document.getElementById('retry');
+  const bar = document.querySelector('[role=progressbar]');
+  const mb = x => (x / 1048576).toFixed(1) + ' MB';
+  const show = (pc, text) => { p.style.width = pc + '%'; bar.setAttribute('aria-valuenow', Math.round(pc)); if (text != null) t.textContent = text; };
+  // Only a real Vertx page is opened (not a network filter's block page or an error page).
+  const isVertx = s => s.length > 1000000 && s.includes('<title>Vertx</title>') && s.includes('id="frame"') && s.includes('const ONLY_WISP');
+
+  // Last good copy, for when every source is blocked or offline.
+  const DB = 'vertx-loader', STORE = 'page';
+  const idb = () => new Promise((res, rej) => { const q = indexedDB.open(DB, 1); q.onupgradeneeded = () => q.result.createObjectStore(STORE); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+  const saveCopy = async html => { try { const db = await idb(); await new Promise(r => { const tx = db.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put({ html, at: Date.now() }, 'last'); tx.oncomplete = tx.onerror = r; }); db.close(); } catch (_) {} };
+  const loadCopy = async () => { try { const db = await idb(); const v = await new Promise(r => { const g = db.transaction(STORE).objectStore(STORE).get('last'); g.onsuccess = () => r(g.result); g.onerror = () => r(null); }); db.close(); return v && typeof v.html === 'string' && isVertx(v.html) ? v : null; } catch (_) { return null; } };
+
+  async function fetchOne(url) {
+    const ac = new AbortController();
+    const connect = setTimeout(() => ac.abort(), CONNECT_MS);
+    let r;
+    try { r = await fetch(url, { cache: 'no-store', signal: ac.signal }); } finally { clearTimeout(connect); }
+    if (!r.ok || !r.body) throw new Error('HTTP ' + r.status);
+    const total = +(r.headers.get('content-length') || 0), exact = !!total && !r.headers.get('content-encoding');
+    const rd = r.body.getReader(), parts = []; let got = 0;
+    for (;;) {
+      let tm;
+      const q = await Promise.race([rd.read(), new Promise((_, j) => { tm = setTimeout(() => j(new Error('stalled')), STALL_MS); })]).finally(() => clearTimeout(tm));
+      if (q.done) break;
+      parts.push(q.value); got += q.value.length;
+      const den = exact && got <= total * 1.02 ? total : Math.max(EST, got * 1.05);
+      const pc = Math.min(98, got / den * 100);
+      show(pc, Math.round(pc) + '% · ' + mb(got));
+    }
+    const all = new Uint8Array(got); let o = 0;
+    for (const c of parts) { all.set(c, o); o += c.length; }
+    return new TextDecoder('utf-8').decode(all);
+  }
+
+  const open = html => { show(100, 'Opening…'); setTimeout(() => { document.open(); document.write(html); document.close(); }, 30); };
+
+  async function run() {
+    retry.hidden = true;
+    for (let i = 0; i < SOURCES.length; i++) {
+      show(0, i ? 'Trying backup ' + i + ' of ' + (SOURCES.length - 1) + '…' : 'Connecting…');
+      try {
+        const html = await fetchOne(SOURCES[i]);
+        if (!isVertx(html)) throw new Error('not Vertx');
+        await saveCopy(html);
+        return open(html);
+      } catch (_) { await new Promise(r => setTimeout(r, 150)); }
+    }
+    const copy = await loadCopy();
+    if (copy) {
+      show(100, 'Couldn’t reach the servers. Opening the copy saved ' + new Date(copy.at).toLocaleDateString() + '…');
+      return setTimeout(() => open(copy.html), 1200);
+    }
+    show(0, 'Couldn’t load Vertx. Every source was blocked or offline.');
+    retry.hidden = false;
+  }
+  retry.onclick = run;
+  run();
+})();
+</script>
+</body></html>
