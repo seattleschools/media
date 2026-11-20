@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      TGLSC - Education
+    </title>
+    <meta name="description" content="Explore lessons in mathematics, science, technology, and more with TGLSC - Education." />
+    <meta name="keywords" content="Education, School, Science, STEM, Math, Courses, Lessons" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="TGLSC - Education | Available Lessons" />
+    <meta property="og:description" content="Explore lessons in mathematics, science, technology, and more with TGLSC - Education." />
+    <meta property="og:image" content="https://glseries.net/assets/data/bundles/ma.ms/preview.png" />
+    <meta property="og:image:alt" content="Preview of an available lesson at TGLSC - Education" />
+    <meta property="og:site_name" content="TGLSC - Education" />
+    <meta property="og:url" content="https://glseries.net/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TGLSC - Education | Available Lessons" />
+    <meta name="twitter:description" content="Explore lessons in mathematics, science, technology, and more with TGLSC - Education." />
+    <meta name="twitter:image" content="https://glseries.net/assets/data/bundles/ma.ms/preview.png" />
+    <link rel="manifest" href="/assets/data/json/manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="TGLSC" />
+    <link rel="icon" type="image/x-icon" href="/assets/data/bundles/ma.ico/acadamy-xf88ebla78sdgjvasd.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=DM+Mono:wght@300;400&amp;display=swap" rel="stylesheet" />
+    <style>
+      * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --glx-ink: #0f0e0c;
+            --glx-paper: #f5f0e8;
+            --glx-accent: #c8553d;
+            --glx-accent-cyan: #0891b2;
+            --glx-muted: #8a8070;
+            --glx-line: #d4cdc0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: &#39;DM Mono&#39;, monospace;
+            background: var(--glx-paper);
+            color: var(--glx-ink);
+            overflow: hidden;
+        }
+
+        .glx-root {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glx-grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(var(--glx-line) 1px, transparent 1px), linear-gradient(90deg, var(--glx-line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glx-noise {
+            position: absolute;
+            inset: 0;
+            background-image: url(&#34;data:image/svg+xml,%3Csvg xmlns=&#39;http://www.w3.org/2000/svg&#39; width=&#39;300&#39; height=&#39;300&#39;%3E%3Cfilter id=&#39;n&#39;%3E%3CfeTurbulence type=&#39;fractalNoise&#39; baseFrequency=&#39;0.75&#39; numOctaves=&#39;4&#39; stitchTiles=&#39;stitch&#39;/%3E%3C/filter%3E%3Crect width=&#39;300&#39; height=&#39;300&#39; filter=&#39;url(%23n)&#39; opacity=&#39;0.04&#39;/%3E%3C/svg%3E&#34;);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .math-typewriter {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .math-line {
+            position: absolute;
+            font-size: 13px;
+            color: var(--glx-accent-cyan);
+            opacity: 0.12;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            font-family: &#39;DM Mono&#39;, monospace;
+            white-space: nowrap;
+            max-width: 600px;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .geo-shapes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .geo-circle {
+            position: absolute;
+            border: 2px solid var(--glx-accent);
+            border-radius: 50%;
+            opacity: 0.08;
+        }
+
+        .geo-circle-1 {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            right: 5%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .geo-circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: 15%;
+            left: 8%;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        .geo-triangle {
+            position: absolute;
+            opacity: 0.06;
+        }
+
+        .geo-triangle-1 {
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 260px solid var(--glx-accent);
+            top: 5%;
+            left: 15%;
+            animation: rotate 30s linear infinite;
+        }
+
+        .geo-triangle-2 {
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 173px solid var(--glx-accent-cyan);
+            bottom: 10%;
+            right: 12%;
+            animation: rotate 35s linear infinite reverse;
+        }
+
+        .geo-square {
+            position: absolute;
+            border: 2px solid var(--glx-accent);
+            opacity: 0.07;
+        }
+
+        .geo-square-1 {
+            width: 180px;
+            height: 180px;
+            top: 50%;
+            right: 3%;
+            transform: rotate(45deg);
+            animation: float 22s ease-in-out infinite;
+        }
+
+        .geo-square-2 {
+            width: 120px;
+            height: 120px;
+            bottom: 25%;
+            left: 40%;
+            transform: rotate(25deg);
+            animation: float 28s ease-in-out infinite reverse;
+            border-color: var(--glx-accent-cyan);
+        }
+
+        .geo-line {
+            position: absolute;
+            background: var(--glx-accent);
+            opacity: 0.05;
+        }
+
+        .geo-line-1 {
+            width: 400px;
+            height: 1px;
+            top: 30%;
+            left: 5%;
+            transform: rotate(25deg);
+        }
+
+        .geo-line-2 {
+            width: 300px;
+            height: 1px;
+            bottom: 20%;
+            right: 10%;
+            transform: rotate(-35deg);
+            background: var(--glx-accent-cyan);
+        }
+
+        .glx-inner {
+            position: relative;
+            z-index: 3;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+
+        .glx-left {
+            padding: 2.2rem 2.5rem 1.4rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 1px solid var(--glx-line);
+            overflow-y: auto;
+        }
+
+        .glx-right {
+            padding: 2.2rem 3rem 2.2rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        .glx-eyebrow {
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--glx-muted);
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: glx-fade-up 0.5s ease both;
+        }
+
+        .glx-eyebrow::before {
+            content: &#39;&#39;;
+            display: block;
+            width: 24px;
+            height: 1px;
+            background: #0891b2;
+        }
+
+        .glx-eyebrow.cyan::before {
+            background: var(--glx-accent-cyan);
+        }
+
+        .glx-headline {
+            font-family: &#39;Playfair Display&#39;, serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.08;
+            letter-spacing: -0.02em;
+            margin-top: 1rem;
+            color: var(--glx-ink);
+            animation: glx-fade-up 0.6s 0.1s ease both;
+        }
+
+        .glx-headline em {
+            font-style: italic;
+            color: var(--glx-accent-cyan);
+        }
+
+        .glx-desc {
+            font-size: 12px;
+            line-height: 1.8;
+            color: var(--glx-muted);
+            margin-top: 0.9rem;
+            max-width: 520px;
+            font-weight: 300;
+            animation: glx-fade-up 0.6s 0.2s ease both;
+        }
+
+        .glx-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--glx-ink);
+            text-decoration: none;
+            border-bottom: 1px solid var(--glx-ink);
+            padding-bottom: 6px;
+            width: fit-content;
+            transition: gap 0.25s ease, color 0.2s;
+            cursor: pointer;
+            animation: glx-fade-up 0.6s 0.3s ease both;
+        }
+
+        .glx-cta:hover {
+            gap: 20px;
+            color: var(--glx-accent-cyan);
+            border-color: var(--glx-accent-cyan);
+        }
+
+        .glx-cta-arrow {
+            font-size: 16px;
+            transition: transform 0.25s;
+        }
+
+        .glx-cta:hover .glx-cta-arrow {
+            transform: translateX(4px);
+        }
+
+        .glx-video-section {
+            margin-top: 2.2rem;
+            animation: glx-fade-up 0.6s 0.32s ease both;
+        }
+
+        .glx-video-label {
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--glx-muted);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .glx-video-label::before {
+            content: &#39;&#39;;
+            display: block;
+            width: 16px;
+            height: 1px;
+            background: var(--glx-accent-cyan);
+        }
+
+        .glx-video-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--glx-line);
+            background: #000;
+            aspect-ratio: 16 / 9;
+        }
+
+        .glx-video-wrapper img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .glx-brand-footer {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            margin-top: 0.6rem;
+            border-top: 1px solid var(--glx-line);
+            animation: glx-fade-up 0.6s 0.38s ease both;
+        }
+
+        .glx-brand-icon-box {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glx-brand-icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .glx-brand-icon-box span {
+            font-family: &#39;Playfair Display&#39;, serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--glx-paper);
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .glx-brand-icon-box span em {
+            color: var(--glx-accent-cyan);
+            font-style: normal;
+        }
+
+        .glx-brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .glx-brand-name {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--glx-ink);
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .glx-brand-name strong {
+            color: var(--glx-accent-cyan);
+        }
+
+        .glx-brand-sub {
+            font-size: 9px;
+            color: var(--glx-muted);
+            letter-spacing: 0.08em;
+            font-weight: 300;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .glx-brand-copy {
+            font-size: 8.5px;
+            color: var(--glx-line);
+            letter-spacing: 0.06em;
+            margin-top: 1px;
+        }
+
+        .glx-modules {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            animation: glx-fade-up 0.6s 0.15s ease both;
+        }
+
+        .glx-module-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid var(--glx-line);
+        }
+
+        .glx-module-item:first-child {
+            border-top: 1px solid var(--glx-line);
+        }
+
+        .glx-module-num {
+            font-size: 10px;
+            color: var(--glx-accent-cyan);
+            letter-spacing: 0.1em;
+            padding-top: 3px;
+            min-width: 24px;
+            font-weight: 300;
+        }
+
+        .glx-module-title {
+            font-family: &#39;Playfair Display&#39;, serif;
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 3px;
+        }
+
+        .glx-module-sub {
+            font-size: 11px;
+            color: var(--glx-muted);
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        .glx-module-tag {
+            margin-left: auto;
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--glx-accent-cyan);
+            border: 1px solid var(--glx-accent-cyan);
+            padding: 2px 7px;
+            border-radius: 20px;
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        .glx-geo-problem {
+            margin-top: 1.4rem;
+            border: 1px solid var(--glx-line);
+            border-radius: 6px;
+            background: rgba(248, 246, 240, 0.7);
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            animation: glx-fade-up 0.6s 0.25s ease both;
+            position: relative;
+        }
+
+        .glx-geo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid var(--glx-line);
+            background: rgba(8, 145, 178, 0.04);
+        }
+
+        .glx-geo-label {
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--glx-accent-cyan);
+            font-weight: 400;
+        }
+
+        .glx-geo-refresh {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--glx-muted);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: &#39;DM Mono&#39;, monospace;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+
+        .glx-geo-refresh:hover {
+            color: var(--glx-accent-cyan);
+        }
+
+        .glx-geo-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .glx-geo-visual {
+            padding: 0.8rem;
+            border-right: 1px solid var(--glx-line);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glx-geo-visual svg {
+            width: 100%;
+            max-width: 120px;
+            height: auto;
+        }
+
+        .glx-geo-info {
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .glx-geo-problem-text {
+            font-size: 11px;
+            line-height: 1.6;
+            color: var(--glx-ink);
+            font-weight: 400;
+        }
+
+        .glx-geo-given {
+            font-size: 10px;
+            color: var(--glx-muted);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .glx-geo-given span {
+            color: var(--glx-accent-cyan);
+        }
+
+        .glx-geo-answer-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.2rem;
+        }
+
+        .glx-geo-answer-label {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--glx-muted);
+        }
+
+        .glx-geo-answer {
+            font-family: &#39;Playfair Display&#39;, serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--glx-accent);
+        }
+
+        .glx-geo-reveal {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--glx-accent-cyan);
+            border: 1px solid var(--glx-accent-cyan);
+            padding: 3px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            background: none;
+            font-family: &#39;DM Mono&#39;, monospace;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .glx-geo-reveal:hover {
+            background: var(--glx-accent-cyan);
+            color: white;
+        }
+
+        .glx-bottom-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--glx-line);
+            animation: glx-fade-up 0.6s 0.4s ease both;
+        }
+
+        .glx-stats-inline {
+            display: flex;
+            gap: 1.6rem;
+        }
+
+        .glx-stat-val {
+            font-family: &#39;Playfair Display&#39;, serif;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--glx-ink);
+        }
+
+        .glx-stat-lbl {
+            font-size: 8px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--glx-muted);
+            margin-top: 3px;
+            font-weight: 300;
+        }
+
+        .glx-meta {
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--glx-muted);
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .fake-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 99999;
+            opacity: 0;
+        }
+
+        .fake-cursor svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.35));
+        }
+
+        .cursor-ripple {
+            position: fixed;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--glx-accent-cyan);
+            pointer-events: none;
+            z-index: 99998;
+            opacity: 0;
+            transform: scale(0.3);
+        }
+
+        @keyframes ripple-out {
+            0% { opacity: 0.8; transform: scale(0.3); }
+            100% { opacity: 0; transform: scale(1.8); }
+        }
+
+        @keyframes glx-fade-up {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-answer {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .answer-visible {
+            animation: pulse-answer 0.3s ease both;
+        }
+
+        @media(max-width:600px) {
+            .glx-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .glx-left {
+                border-right: none;
+                border-bottom: 1px solid var(--glx-line);
+                padding: 2rem 1.5rem;
+            }
+
+            .glx-right {
+                padding: 2rem 1.5rem;
+            }
+
+            .geo-shapes {
+                display: none;
+            }
+
+            .glx-geo-body {
+                grid-template-columns: 1fr;
+            }
+
+            .glx-geo-visual {
+                border-right: none;
+                border-bottom: 1px solid var(--glx-line);
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <div class="glx-root">
+      <div class="glx-noise">
+      </div>
+      <div class="glx-grid-bg">
+      </div>
+      <div class="math-typewriter" id="mathTypewriter">
+      </div>
+      <div class="geo-shapes">
+        <div class="geo-circle geo-circle-1">
+        </div>
+        <div class="geo-circle geo-circle-2">
+        </div>
+        <div class="geo-triangle geo-triangle-1">
+        </div>
+        <div class="geo-triangle geo-triangle-2">
+        </div>
+        <div class="geo-square geo-square-1">
+        </div>
+        <div class="geo-square geo-square-2">
+        </div>
+        <div class="geo-line geo-line-1">
+        </div>
+        <div class="geo-line geo-line-2">
+        </div>
+      </div>
+      <div class="fake-cursor" id="fakeCursor">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 2L4 18L8.5 13.5L11.5 20L13.5 19L10.5 12.5L16 12.5L4 2Z" fill="#0f0e0c" stroke="#f5f0e8" stroke-width="0.8">
+          </path>
+        </svg>
+      </div>
+      <div class="cursor-ripple" id="cursorRipple">
+      </div>
+      <div class="glx-inner">
+        <div class="glx-left">
+          <div>
+            <div class="glx-eyebrow">
+              Quality Education
+            </div>
+            <h1 class="glx-headline">
+              Where Education
+              <em>              Is Achievable
+</em>
+            </h1>
+            <p class="glx-desc">
+              Learn among the exceptional with expertly curated programs designed to cultivate leadership, innovation, and excellence.
+            </p>
+            <div class="glx-video-section">
+              <div class="glx-video-label">
+                Available Lesson
+              </div>
+              <div class="glx-video-wrapper">
+                <img src="/assets/data/bundles/ma.ms/preview.png" alt="Preview of an available lesson" />
+              </div>
+            </div>
+          </div>
+          <div class="glx-brand-footer">
+            <div class="glx-brand-icon-box">
+              <img src="/assets/data/bundles/ma.ico/acadamy-xf88ebla78sdgjvasd.ico" />
+            </div>
+            <div class="glx-brand-text">
+              <div class="glx-brand-name">
+                TGLSC -
+                <strong>                Education
+</strong>
+              </div>
+              <div class="glx-brand-sub">
+                Where Education Is Achievable
+              </div>
+              <div class="glx-brand-copy">
+                © TGLSC 2021 - 2026
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="glx-right">
+          <div>
+            <div class="glx-eyebrow cyan">
+              Core Programs
+            </div>
+            <div class="glx-modules">
+              <div class="glx-module-item">
+                <span class="glx-module-num">                01
+</span>
+                <div class="glx-module-body">
+                  <div class="glx-module-title">
+                    Foundation Studies
+                  </div>
+                  <div class="glx-module-sub">
+                    Mathematics, sciences &amp; critical thinking fundamentals
+                  </div>
+                </div>
+                <span class="glx-module-tag">                12 weeks
+</span>
+              </div>
+              <div class="glx-module-item">
+                <span class="glx-module-num">                02
+</span>
+                <div class="glx-module-body">
+                  <div class="glx-module-title">
+                    Advanced Specialization
+                  </div>
+                  <div class="glx-module-sub">
+                    In-depth modules across STEM &amp; humanities disciplines
+                  </div>
+                </div>
+                <span class="glx-module-tag">                16 weeks
+</span>
+              </div>
+              <div class="glx-module-item">
+                <span class="glx-module-num">                03
+</span>
+                <div class="glx-module-body">
+                  <div class="glx-module-title">
+                    Capstone Projects
+                  </div>
+                  <div class="glx-module-sub">
+                    Real-world problem solving &amp; professional portfolio building
+                  </div>
+                </div>
+                <span class="glx-module-tag">                8 weeks
+</span>
+              </div>
+              <div class="glx-module-item">
+                <span class="glx-module-num">                04
+</span>
+                <div class="glx-module-body">
+                  <div class="glx-module-title">
+                    Mentorship &amp; Career
+                  </div>
+                  <div class="glx-module-sub">
+                    1-on-1 guidance &amp; industry connections for your future
+                  </div>
+                </div>
+                <span class="glx-module-tag">                Ongoing
+</span>
+              </div>
+            </div>
+            <div class="glx-geo-problem" id="geoProblemCard">
+              <div class="glx-geo-header">
+                <span class="glx-geo-label">                Quick Take
+</span>
+                <button class="glx-geo-refresh" id="newProblemBtn" onclick="loadNewProblem()">
+                  New Problem -&gt;
+                </button>
+              </div>
+              <div class="glx-geo-body">
+                <div class="glx-geo-visual" id="geoVisual">
+                </div>
+                <div class="glx-geo-info">
+                  <div class="glx-geo-problem-text" id="geoProblemText">
+                  </div>
+                  <div class="glx-geo-given" id="geoGiven">
+                  </div>
+                  <div class="glx-geo-answer-row">
+                    <span class="glx-geo-answer-label">                    Answer:
+</span>
+                    <span class="glx-geo-answer" id="geoAnswer" style="display:none;"></span>
+                    <button class="glx-geo-reveal" id="geoRevealBtn" onclick="revealAnswer()">
+                      Show
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="glx-cta" style="margin-top: 1.2rem;">
+              Start Your Journey
+              <span class="glx-cta-arrow">              -&gt;
+</span>
+            </div>
+          </div>
+          <div class="glx-bottom-strip">
+            <div class="glx-stats-inline">
+              <div>
+                <div class="glx-stat-val">
+                  25K+
+                </div>
+                <div class="glx-stat-lbl">
+                  Students
+                </div>
+              </div>
+              <div>
+                <div class="glx-stat-val">
+                  175+
+                </div>
+                <div class="glx-stat-lbl">
+                  Courses
+                </div>
+              </div>
+              <div>
+                <div class="glx-stat-val">
+                  98%
+                </div>
+                <div class="glx-stat-lbl">
+                  Pass Rate
+                </div>
+              </div>
+            </div>
+            <div class="glx-meta">
+              Expert Instructors
+              <br />
+              Guaranteed Results
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      if (&#39;serviceWorker&#39; in navigator) {
+            window.addEventListener(&#39;load&#39;, () =&gt; {
+                navigator.serviceWorker.register(&#39;/sw.js&#39;);
+            });
+        }
+
+        const problems = [
+            {
+                type: &#39;circle-area&#39;,
+                generate: () =&gt; {
+                    const r = Math.floor(Math.random() * 10) + 2;
+                    const area = (Math.PI * r * r).toFixed(2);
+                    return {
+                        question: &#39;Find the area of the circle.&#39;,
+                        given: `Radius: &lt;span&gt;${r} cm&lt;/span&gt;`,
+                        answer: `${area} cm²`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;circle cx=&#34;60&#34; cy=&#34;60&#34; r=&#34;44&#34; fill=&#34;rgba(8,145,178,0.08)&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;1.5&#34;/&gt;
+                            &lt;line x1=&#34;60&#34; y1=&#34;60&#34; x2=&#34;104&#34; y2=&#34;60&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1.5&#34; stroke-dasharray=&#34;4,2&#34;/&gt;
+                            &lt;text x=&#34;78&#34; y=&#34;55&#34; font-size=&#34;10&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;r=${r}&lt;/text&gt;
+                            &lt;circle cx=&#34;60&#34; cy=&#34;60&#34; r=&#34;2.5&#34; fill=&#34;#0891b2&#34;/&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            },
+            {
+                type: &#39;circle-circumference&#39;,
+                generate: () =&gt; {
+                    const r = Math.floor(Math.random() * 10) + 2;
+                    const circ = (2 * Math.PI * r).toFixed(2);
+                    return {
+                        question: &#39;Find the circumference of the circle.&#39;,
+                        given: `Radius: &lt;span&gt;${r} cm&lt;/span&gt;`,
+                        answer: `${circ} cm`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;circle cx=&#34;60&#34; cy=&#34;60&#34; r=&#34;44&#34; fill=&#34;rgba(8,145,178,0.05)&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;2&#34; stroke-dasharray=&#34;6,3&#34;/&gt;
+                            &lt;line x1=&#34;60&#34; y1=&#34;60&#34; x2=&#34;104&#34; y2=&#34;60&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1.5&#34; stroke-dasharray=&#34;4,2&#34;/&gt;
+                            &lt;text x=&#34;78&#34; y=&#34;55&#34; font-size=&#34;10&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;r=${r}&lt;/text&gt;
+                            &lt;circle cx=&#34;60&#34; cy=&#34;60&#34; r=&#34;2.5&#34; fill=&#34;#0891b2&#34;/&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            },
+            {
+                type: &#39;triangle-area&#39;,
+                generate: () =&gt; {
+                    const b = Math.floor(Math.random() * 12) + 3;
+                    const h = Math.floor(Math.random() * 12) + 3;
+                    const area = (0.5 * b * h).toFixed(1);
+                    return {
+                        question: &#39;Find the area of the triangle.&#39;,
+                        given: `Base: &lt;span&gt;${b} cm&lt;/span&gt;, Height: &lt;span&gt;${h} cm&lt;/span&gt;`,
+                        answer: `${area} cm²`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;polygon points=&#34;60,16 14,104 106,104&#34; fill=&#34;rgba(200,85,61,0.07)&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1.5&#34;/&gt;
+                            &lt;line x1=&#34;60&#34; y1=&#34;16&#34; x2=&#34;60&#34; y2=&#34;104&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;1.5&#34; stroke-dasharray=&#34;4,2&#34;/&gt;
+                            &lt;text x=&#34;63&#34; y=&#34;66&#34; font-size=&#34;9&#34; fill=&#34;#0891b2&#34; font-family=&#34;DM Mono,monospace&#34;&gt;h=${h}&lt;/text&gt;
+                            &lt;text x=&#34;28&#34; y=&#34;115&#34; font-size=&#34;9&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;b=${b}&lt;/text&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            },
+            {
+                type: &#39;rectangle-area&#39;,
+                generate: () =&gt; {
+                    const w = Math.floor(Math.random() * 14) + 3;
+                    const h = Math.floor(Math.random() * 10) + 3;
+                    const area = w * h;
+                    return {
+                        question: &#39;Find the area of the rectangle.&#39;,
+                        given: `Width: &lt;span&gt;${w} cm&lt;/span&gt;, Height: &lt;span&gt;${h} cm&lt;/span&gt;`,
+                        answer: `${area} cm²`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;rect x=&#34;12&#34; y=&#34;32&#34; width=&#34;96&#34; height=&#34;60&#34; fill=&#34;rgba(8,145,178,0.07)&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;1.5&#34;/&gt;
+                            &lt;text x=&#34;42&#34; y=&#34;67&#34; font-size=&#34;10&#34; fill=&#34;#0891b2&#34; font-family=&#34;DM Mono,monospace&#34;&gt;${w} cm&lt;/text&gt;
+                            &lt;text x=&#34;100&#34; y=&#34;67&#34; font-size=&#34;9&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34; transform=&#34;rotate(90,100,67)&#34;&gt;${h}&lt;/text&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            },
+            {
+                type: &#39;rectangle-perimeter&#39;,
+                generate: () =&gt; {
+                    const w = Math.floor(Math.random() * 14) + 3;
+                    const h = Math.floor(Math.random() * 10) + 3;
+                    const perim = 2 * (w + h);
+                    return {
+                        question: &#39;Find the perimeter of the rectangle.&#39;,
+                        given: `Width: &lt;span&gt;${w} cm&lt;/span&gt;, Height: &lt;span&gt;${h} cm&lt;/span&gt;`,
+                        answer: `${perim} cm`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;rect x=&#34;12&#34; y=&#34;32&#34; width=&#34;96&#34; height=&#34;60&#34; fill=&#34;rgba(8,145,178,0.05)&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;2&#34; stroke-dasharray=&#34;5,3&#34;/&gt;
+                            &lt;text x=&#34;42&#34; y=&#34;27&#34; font-size=&#34;10&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;${w} cm&lt;/text&gt;
+                            &lt;text x=&#34;1&#34; y=&#34;67&#34; font-size=&#34;9&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;${h}&lt;/text&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            },
+            {
+                type: &#39;pythagorean&#39;,
+                generate: () =&gt; {
+                    const triples = [[3,4,5],[5,12,13],[8,15,17],[7,24,25],[6,8,10],[9,12,15]];
+                    const [a, b, c] = triples[Math.floor(Math.random() * triples.length)];
+                    return {
+                        question: &#39;Find the hypotenuse (c) using the Pythagorean theorem.&#39;,
+                        given: `a = &lt;span&gt;${a} cm&lt;/span&gt;, b = &lt;span&gt;${b} cm&lt;/span&gt;`,
+                        answer: `c = ${c} cm`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;polygon points=&#34;14,100 14,28 100,100&#34; fill=&#34;rgba(200,85,61,0.07)&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1.5&#34;/&gt;
+                            &lt;rect x=&#34;14&#34; y=&#34;88&#34; width=&#34;12&#34; height=&#34;12&#34; fill=&#34;none&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;1.2&#34;/&gt;
+                            &lt;text x=&#34;2&#34; y=&#34;68&#34; font-size=&#34;9&#34; fill=&#34;#0891b2&#34; font-family=&#34;DM Mono,monospace&#34;&gt;a=${a}&lt;/text&gt;
+                            &lt;text x=&#34;44&#34; y=&#34;114&#34; font-size=&#34;9&#34; fill=&#34;#0891b2&#34; font-family=&#34;DM Mono,monospace&#34;&gt;b=${b}&lt;/text&gt;
+                            &lt;text x=&#34;52&#34; y=&#34;60&#34; font-size=&#34;9&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34; transform=&#34;rotate(-42,52,60)&#34;&gt;c=?&lt;/text&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            },
+            {
+                type: &#39;square-area&#39;,
+                generate: () =&gt; {
+                    const s = Math.floor(Math.random() * 12) + 2;
+                    const area = s * s;
+                    return {
+                        question: &#39;Find the area of the square.&#39;,
+                        given: `Side length: &lt;span&gt;${s} cm&lt;/span&gt;`,
+                        answer: `${area} cm²`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;rect x=&#34;18&#34; y=&#34;18&#34; width=&#34;84&#34; height=&#34;84&#34; fill=&#34;rgba(8,145,178,0.07)&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;1.5&#34;/&gt;
+                            &lt;text x=&#34;42&#34; y=&#34;12&#34; font-size=&#34;10&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;${s} cm&lt;/text&gt;
+                            &lt;line x1=&#34;18&#34; y1=&#34;8&#34; x2=&#34;102&#34; y2=&#34;8&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1&#34; opacity=&#34;0.4&#34;/&gt;
+                            &lt;line x1=&#34;18&#34; y1=&#34;6&#34; x2=&#34;18&#34; y2=&#34;10&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1&#34; opacity=&#34;0.4&#34;/&gt;
+                            &lt;line x1=&#34;102&#34; y1=&#34;6&#34; x2=&#34;102&#34; y2=&#34;10&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1&#34; opacity=&#34;0.4&#34;/&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            },
+            {
+                type: &#39;trapezoid-area&#39;,
+                generate: () =&gt; {
+                    const a = Math.floor(Math.random() * 10) + 4;
+                    const b = Math.floor(Math.random() * 10) + 2;
+                    const h = Math.floor(Math.random() * 8) + 3;
+                    const area = (0.5 * (a + b) * h).toFixed(1);
+                    return {
+                        question: &#39;Find the area of the trapezoid.&#39;,
+                        given: `Base a: &lt;span&gt;${a} cm&lt;/span&gt;, Base b: &lt;span&gt;${b} cm&lt;/span&gt;, Height: &lt;span&gt;${h} cm&lt;/span&gt;`,
+                        answer: `${area} cm²`,
+                        svg: `&lt;svg viewBox=&#34;0 0 120 120&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34;&gt;
+                            &lt;polygon points=&#34;22,100 98,100 82,30 38,30&#34; fill=&#34;rgba(200,85,61,0.07)&#34; stroke=&#34;#c8553d&#34; stroke-width=&#34;1.5&#34;/&gt;
+                            &lt;line x1=&#34;60&#34; y1=&#34;30&#34; x2=&#34;60&#34; y2=&#34;100&#34; stroke=&#34;#0891b2&#34; stroke-width=&#34;1.5&#34; stroke-dasharray=&#34;4,2&#34;/&gt;
+                            &lt;text x=&#34;63&#34; y=&#34;70&#34; font-size=&#34;9&#34; fill=&#34;#0891b2&#34; font-family=&#34;DM Mono,monospace&#34;&gt;h=${h}&lt;/text&gt;
+                            &lt;text x=&#34;30&#34; y=&#34;115&#34; font-size=&#34;9&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;a=${a}&lt;/text&gt;
+                            &lt;text x=&#34;44&#34; y=&#34;24&#34; font-size=&#34;9&#34; fill=&#34;#c8553d&#34; font-family=&#34;DM Mono,monospace&#34;&gt;b=${b}&lt;/text&gt;
+                        &lt;/svg&gt;`
+                    };
+                }
+            }
+        ];
+
+        const mathLines = [
+            &#39;A = πr² solving for radius when area = 50.27&#39;,
+            &#39;V = (4/3)πr³ find volume with radius 5cm&#39;,
+            &#39;F = ma where m = 10kg and a = 9.8m/s²&#39;,
+            &#39;E = mc² calculating energy from mass 5kg&#39;,
+            &#39;P = I²R resistance is 100Ω current is 2A&#39;,
+            &#39;d = vt + (1/2)at² find distance with v=20, a=2, t=5&#39;,
+            &#39;C = 5/9(F - 32) convert 98.6°F to Celsius&#39;,
+            &#39;x = (-b ± √(b²-4ac))/2a quadratic formula&#39;,
+            &#39;sin²θ + cos²θ = 1 verify identity&#39;,
+            &#39;lim(x→0) sin(x)/x = 1 limit evaluation&#39;,
+            &#39;ΔG = ΔH - TΔS Gibbs free energy&#39;,
+            &#39;log₁₀(x) + log₁₀(y) = log₁₀(xy) logarithm rule&#39;,
+            &#39;v² = u² + 2as find velocity given initial 5m/s, a=3, s=10&#39;,
+            &#39;I = mαr² moment of inertia calculation&#39;,
+            &#39;Z = √(R² + (ωL - 1/ωC)²) impedance in circuit&#39;
+        ];
+
+        let currentAnswer = &#39;&#39;;
+        let answerRevealed = false;
+
+        function loadNewProblem() {
+            answerRevealed = false;
+            const answerEl = document.getElementById(&#39;geoAnswer&#39;);
+            const revealBtn = document.getElementById(&#39;geoRevealBtn&#39;);
+            answerEl.style.display = &#39;none&#39;;
+            revealBtn.textContent = &#39;Show&#39;;
+
+            const problem = problems[Math.floor(Math.random() * problems.length)];
+            const data = problem.generate();
+
+            document.getElementById(&#39;geoVisual&#39;).innerHTML = data.svg;
+            document.getElementById(&#39;geoProblemText&#39;).textContent = data.question;
+            document.getElementById(&#39;geoGiven&#39;).innerHTML = data.given;
+            currentAnswer = data.answer;
+        }
+
+        function revealAnswer() {
+            const answerEl = document.getElementById(&#39;geoAnswer&#39;);
+            const revealBtn = document.getElementById(&#39;geoRevealBtn&#39;);
+            if (!answerRevealed) {
+                answerEl.textContent = currentAnswer;
+                answerEl.style.display = &#39;inline&#39;;
+                answerEl.classList.remove(&#39;answer-visible&#39;);
+                void answerEl.offsetWidth;
+                answerEl.classList.add(&#39;answer-visible&#39;);
+                revealBtn.textContent = &#39;Hide&#39;;
+                answerRevealed = true;
+            } else {
+                answerEl.style.display = &#39;none&#39;;
+                revealBtn.textContent = &#39;Show&#39;;
+                answerRevealed = false;
+            }
+        }
+
+        function generateMathTypewriter() {
+            const container = document.getElementById(&#39;mathTypewriter&#39;);
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            for (let i = 0; i &lt; mathLines.length; i++) {
+                const line = mathLines[Math.floor(Math.random() * mathLines.length)];
+                const x = Math.random() * (width - 400);
+                const y = Math.random() * (height - 40);
+                const rotation = (Math.random() - 0.5) * 15;
+
+                const element = document.createElement(&#39;div&#39;);
+                element.className = &#39;math-line&#39;;
+                element.textContent = line;
+                element.style.left = x + &#39;px&#39;;
+                element.style.top = y + &#39;px&#39;;
+                element.style.transform = `rotate(${rotation}deg)`;
+
+                container.appendChild(element);
+            }
+        }
+
+        loadNewProblem();
+        generateMathTypewriter();
+
+        function easeInOutCubic(t) {
+            return t &lt; 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        }
+
+        function animateCursorToButton() {
+            const cursor = document.getElementById(&#39;fakeCursor&#39;);
+            const ripple = document.getElementById(&#39;cursorRipple&#39;);
+            const btn = document.getElementById(&#39;newProblemBtn&#39;);
+
+            const btnRect = btn.getBoundingClientRect();
+            const targetX = btnRect.left + btnRect.width / 2 - 10;
+            const targetY = btnRect.top + btnRect.height / 2 - 10;
+
+            const startX = targetX - 160 - Math.random() * 100;
+            const startY = targetY + 50 + Math.random() * 70;
+
+            cursor.style.left = startX + &#39;px&#39;;
+            cursor.style.top = startY + &#39;px&#39;;
+            cursor.style.transition = &#39;opacity 0.35s ease&#39;;
+            cursor.style.opacity = &#39;0&#39;;
+
+            requestAnimationFrame(() =&gt; {
+                requestAnimationFrame(() =&gt; {
+                    cursor.style.opacity = &#39;1&#39;;
+                });
+            });
+
+            const duration = 1000 + Math.random() * 400;
+            const startTime = performance.now();
+
+            function moveCursor(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = easeInOutCubic(progress);
+
+                const currentX = startX + (targetX - startX) * eased;
+                const currentY = startY + (targetY - startY) * eased;
+
+                cursor.style.left = currentX + &#39;px&#39;;
+                cursor.style.top = currentY + &#39;px&#39;;
+
+                if (progress &lt; 1) {
+                    requestAnimationFrame(moveCursor);
+                } else {
+                    cursor.style.transform = &#39;scale(0.82)&#39;;
+
+                    ripple.style.left = (targetX + 10 - 14) + &#39;px&#39;;
+                    ripple.style.top = (targetY + 10 - 14) + &#39;px&#39;;
+                    ripple.style.animation = &#39;none&#39;;
+                    void ripple.offsetWidth;
+                    ripple.style.animation = &#39;ripple-out 0.5s ease-out forwards&#39;;
+
+                    loadNewProblem();
+
+                    setTimeout(() =&gt; {
+                        cursor.style.transform = &#39;scale(1)&#39;;
+                    }, 160);
+
+                    setTimeout(() =&gt; {
+                        cursor.style.transition = &#39;opacity 0.5s ease&#39;;
+                        cursor.style.opacity = &#39;0&#39;;
+                    }, 520);
+                }
+            }
+
+            requestAnimationFrame(moveCursor);
+        }
+
+        function scheduleNext(isFirst) {
+            const delay = isFirst ? 1800 : (7000 + Math.random() * 6000);
+            setTimeout(() =&gt; {
+                animateCursorToButton();
+                scheduleNext(false);
+            }, delay);
+        }
+
+        scheduleNext(true);
+    </script>
+    <script src="/assets/data/js/data.timeout.js">
+    </script>
+  </body>
+</html>
