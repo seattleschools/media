@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yahiazakiz OS — Auto Loader</title>
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
+  <link rel="preconnect" href="https://api.github.com" crossorigin />
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #00ff66;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0 16px;
+      text-align: center;
+    }
+    .status { font-size: 1.1rem; margin-bottom: 8px; }
+    .sub { font-size: 0.85rem; color: #00aa44; white-space: pre-wrap; word-break: break-word; }
+    button { margin-top: 14px; font: inherit; color: #00ff66; background: transparent; border: 1px solid #00aa44; padding: 8px 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="status" id="status">[ BOOTING YAHIAZAKIZ OS... ]</div>
+  <div class="sub" id="sub">Fetching latest build from GitHub...</div>
+  <button id="retry" hidden>Try again</button>
+  <button id="direct" hidden>Open site directly</button>
+  <button id="mirror" hidden>Open mirror</button>
+
+  <script>
+    /* ===== change these two lines if the repo or file name changes ===== */
+    const REPO = "dS6667STORM/Yahiazakiz-os";
+    const FILE = "yahiazakiz os.html";
+    /* ================================================================= */
+
+    const CACHE_KEY = "yahiazakiz_os_cached_html";
+    try { localStorage.removeItem(CACHE_KEY); } catch (e) { /* old-format cache, no longer used */ }
+    const ENC = encodeURIComponent(FILE);
+    const TIMEOUT = 10000;
+    // Last resort when downloads are blocked (e.g. a local file on iPhone): open the site directly.
+    const [OWNER, NAME] = REPO.split("/");
+    const DIRECT = `https://${OWNER.toLowerCase()}.github.io/${NAME}/${ENC}`;
+    const DIRECT_MIRROR = `https://cdn.jsdelivr.net/gh/${REPO}@main/${ENC}`;
+    // Stage 1: two FRESH sources raced in parallel (first valid answer wins).
+    const FRESH = [
+      { name: "raw.githubusercontent.com", url: `https://raw.githubusercontent.com/${REPO}/main/${ENC}` },
+      { name: "api.github.com", url: `https://api.github.com/repos/${REPO}/contents/${ENC}?ref=main`, headers: { Accept: "application/vnd.github.raw" } }
+    ];
+    // Stage 2: CDN mirrors (can lag behind GitHub), only used if stage 1 fails.
+    const MIRRORS = [
+      { name: "cdn.jsdelivr.net", url: `https://cdn.jsdelivr.net/gh/${REPO}@main/${ENC}` },
+      { name: "fastly.jsdelivr.net", url: `https://fastly.jsdelivr.net/gh/${REPO}@main/${ENC}` }
+    ];
+
+    const statusEl = document.getElementById("status");
+    const subEl = document.getElementById("sub");
+    const retryEl = document.getElementById("retry");
+    let busy = false;
+
+    // ---- cache in IndexedDB (no 5 MB localStorage limit) ----
+    const idbOpen = () => new Promise((res, rej) => {
+      const r = indexedDB.open("yzk", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("kv");
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+    const idbGet = async (k) => { try { const d = await idbOpen(); return await new Promise((res) => { const q = d.transaction("kv").objectStore("kv").get(k); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); } catch (e) { return null; } };
+    const idbPut = async (k, v) => { try { const d = await idbOpen(); await new Promise((res) => { const t = d.transaction("kv", "readwrite"); t.objectStore("kv").put(v, k); t.oncomplete = res; t.onerror = res; }); } catch (e) { /* cache unavailable */ } };
+    const isHtml = (h) => typeof h === "string" && /<(!doctype|html)[\s>]/i.test(h);
+
+    // Runs INSIDE the booted site: quietly refreshes the saved copy for the next open.
+    function bgUpdate(cfg) {
+      setTimeout(async () => {
+        try {
+          const open = () => new Promise((res, rej) => { const r = indexedDB.open("yzk", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+          const d = await open();
+          for (const u of cfg.urls) {
+            try {
+              const r = await fetch(u.url + (u.url.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store", headers: u.headers });
+              if (!r.ok) continue;
+              const h = await r.text();
+              if (!/<(!doctype|html)[\s>]/i.test(h)) continue;
+              const old = await new Promise((res) => { const q = d.transaction("kv").objectStore("kv").get(cfg.key); q.onsuccess = () => res(q.result); q.onerror = () => res(null); });
+              if (old !== h) await new Promise((res) => { const t = d.transaction("kv", "readwrite"); t.objectStore("kv").put(h, cfg.key); t.oncomplete = res; t.onerror = res; });
+              return;
+            } catch (e) { /* try next source */ }
+          }
+        } catch (e) { /* ignore */ }
+      }, 3000);
+    }
+
+    function bootOS(html, withUpdater) {
+      if (withUpdater) {
+        const tag = "<script>(" + bgUpdate.toString() + ")(" + JSON.stringify({ key: CACHE_KEY, urls: FRESH }) + ");<\/script>";
+        html = /<\/body>/i.test(html) ? html.replace(/<\/body>(?![\s\S]*<\/body>)/i, tag + "</body>") : html + tag;
+      }
+      document.open();
+      document.write(html);
+      document.close();
+    }
+
+    // Resolves with the first valid HTML from any source; rejects with a list of reasons.
+    function raceSources(sources, errors) {
+      return new Promise((resolve, reject) => {
+        let pending = sources.length, done = false;
+        const ctls = [];
+        sources.forEach((src) => {
+          const ctl = new AbortController();
+          ctls.push(ctl);
+          const timer = setTimeout(() => ctl.abort(), TIMEOUT);
+          const sep = src.url.includes("?") ? "&" : "?";
+          fetch(`${src.url}${sep}t=${Date.now()}`, { cache: "no-store", signal: ctl.signal, headers: src.headers })
+            .then(async (r) => {
+              if (!r.ok) throw new Error("HTTP " + r.status);
+              const html = await r.text();
+              if (!/<(!doctype|html)[\s>]/i.test(html)) throw new Error("not an HTML page");
+              return html;
+            })
+            .then((html) => {
+              if (done) return;
+              done = true;
+              ctls.forEach((c) => c.abort());
+              resolve({ html, from: src.name });
+            })
+            .catch((e) => {
+              if (done) return;
+              errors.push(`${src.name}: ${e.name === "AbortError" ? "no response in " + TIMEOUT / 1000 + "s" : e.message}`);
+              if (--pending === 0) reject(errors);
+            })
+            .finally(() => clearTimeout(timer));
+        });
+      });
+    }
+
+    async function initLoader() {
+      if (busy) return;
+      busy = true;
+      retryEl.hidden = true;
+      statusEl.textContent = "[ BOOTING YAHIAZAKIZ OS... ]";
+      // FAST PATH: saved copy exists -> launch instantly, refresh it in the background.
+      // Add ?fresh to the address to force a download first.
+      if (!/[?&]fresh\b/.test(location.search)) {
+        const saved = await idbGet(CACHE_KEY);
+        if (isHtml(saved)) { bootOS(saved, true); return; }
+      }
+      const t0 = Date.now();
+      const tick = setInterval(() => {
+        subEl.textContent = `Fetching latest build from GitHub... ${Math.round((Date.now() - t0) / 1000)}s`;
+      }, 500);
+      subEl.textContent = "Fetching latest build from GitHub... 0s";
+
+      const errors = [];
+      let result = null;
+      try { result = await raceSources(FRESH, errors); } catch (e) { /* try mirrors */ }
+      if (!result) {
+        subEl.textContent = "GitHub slow. Trying mirrors...";
+        try { result = await raceSources(MIRRORS, errors); } catch (e) { /* fall to cache */ }
+      }
+      clearInterval(tick);
+
+      if (result) {
+        idbPut(CACHE_KEY, result.html);
+        statusEl.textContent = "[ UPDATE COMPLETE ]";
+        subEl.textContent = `Launching Yahiazakiz OS... (${Math.round(result.html.length / 1024)} KB from ${result.from})`;
+        bootOS(result.html, false);
+        return;
+      }
+
+      const cachedHtml = await idbGet(CACHE_KEY);
+      if (isHtml(cachedHtml)) {
+        statusEl.textContent = "[ OFFLINE MODE ]";
+        subEl.textContent = "Network unreachable. Booting cached build...";
+        setTimeout(() => bootOS(cachedHtml, true), 400);
+      } else {
+        busy = false;
+        statusEl.textContent = "[ BOOT FAILED ]";
+        subEl.textContent = "Could not fetch OS and no local cache exists.\n" + errors.join("\n");
+        retryEl.hidden = false;
+        document.getElementById("direct").hidden = false;
+        document.getElementById("mirror").hidden = false;
+        if (location.origin !== new URL(DIRECT).origin) {
+          subEl.textContent += "\nOpening the site directly from GitHub Pages...";
+          setTimeout(() => location.replace(DIRECT), 2500);
+        }
+      }
+    }
+
+    document.getElementById("direct").onclick = () => location.replace(DIRECT);
+    document.getElementById("mirror").onclick = () => location.replace(DIRECT_MIRROR);
+    retryEl.onclick = initLoader;
+    initLoader();
+  </script>
+</body>
+</html>
