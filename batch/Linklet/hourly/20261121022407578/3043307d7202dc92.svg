@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
+     style="position:fixed;top:0;left:0;width:100%;height:100%;">
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <body xmlns="http://www.w3.org/1999/xhtml"
+          style="margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;">
+      <iframe id="game-frame"
+        style="width:100%;height:100%;border:none;display:block;"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock allow-downloads"
+        src="about:blank">
+      </iframe>
+    </body>
+  </foreignObject>
+
+  <script type="text/javascript">
+    <![CDATA[
+      (function () {
+        var REPO       = 'https://cdn.jsdelivr.net/gh/learningapi/mathassignments/';
+        var pageUrl    = 'https://cdn.jsdelivr.net/gh/learningapi/learning-html/math.html';
+        var GAMES_JSON = REPO + '/math.json';
+        var frame = document.getElementById('game-frame');
+
+        // Start both network requests immediately, while the splash is visible,
+        // so network loading does not add another delay after the 1.5-second hold.
+        var gamesDataPromise = Promise.all([
+          fetch(pageUrl).then(function (r) {
+            if (!r.ok) throw new Error('Could not load games HTML: ' + r.status);
+            return r.text();
+          }),
+          fetch(GAMES_JSON).then(function (r) {
+            if (!r.ok) throw new Error('Could not load games list: ' + r.status);
+            return r.json();
+          })
+        ]);
+
+
+        function showTutoringSplash() {
+                    var tutoringSplash = '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+            '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+            '<title>4 Math Tutoring</title><style>' +
+            '*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}' +
+            'body{color:#172033;background:#f5f8ff;overflow:hidden}' +
+            '.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,6vw,84px);background:rgba(255,255,255,.94);border-bottom:1px solid #e6ebf5}' +
+            '.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:19px;letter-spacing:-.04em;color:#172033;white-space:nowrap}' +
+            '.brandmark{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;color:white;background:linear-gradient(135deg,#2563eb,#7c3aed);font-size:23px;box-shadow:0 7px 18px #4338ca30}' +
+            '.nav{display:flex;align-items:center;gap:10px}.navitem{padding:10px 14px;border-radius:12px;font-size:13px;font-weight:700;color:#58657c;white-space:nowrap}.navitem.active{background:#edf3ff;color:#2857c5}' +
+            '.wrap{max-width:1120px;margin:0 auto;padding:clamp(28px,5vh,56px) clamp(20px,5vw,56px)}' +
+            '.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;padding:clamp(26px,5vw,54px);border-radius:30px;background:linear-gradient(120deg,#101e45,#243f86 63%,#5b4ac6);color:white;box-shadow:0 22px 55px #243f8625}' +
+            '.hero:after{content:"";position:absolute;width:330px;height:330px;right:-90px;top:-120px;border-radius:50%;border:1px solid #ffffff20;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}' +
+            '.kicker{display:inline-flex;align-items:center;gap:8px;margin:0 0 17px;color:#c6d7ff;font-size:11px;font-weight:850;letter-spacing:.17em;text-transform:uppercase}.dot{width:7px;height:7px;border-radius:50%;background:#67e8f9}' +
+            'h1{max-width:570px;margin:0;font-size:clamp(34px,5.3vw,61px);line-height:1.04;letter-spacing:-.055em;font-weight:850}h1 span{color:#8ee5ff}' +
+            '.intro{max-width:490px;margin:18px 0 25px;color:#d5def7;font-size:15px;line-height:1.7}' +
+            '.actions{display:flex;flex-wrap:wrap;gap:11px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 17px;border-radius:12px;font-size:13px;font-weight:800;white-space:nowrap}.primary{background:#fff;color:#23458e;box-shadow:0 7px 20px #07183c30}.secondary{border:1px solid #ffffff50;color:white;background:#ffffff0b}' +
+            '.art{position:relative;z-index:1;display:grid;place-items:center;min-height:210px}.orb{width:min(230px,75%);aspect-ratio:1;border-radius:36px;transform:rotate(-7deg);display:grid;place-items:center;background:linear-gradient(145deg,#a5f3fc,#c4b5fd 62%,#fbcfe8);box-shadow:0 25px 55px #080e2e55;color:#273c79;font-size:clamp(58px,8vw,88px);font-weight:900}.float{position:absolute;display:grid;place-items:center;width:54px;height:54px;border-radius:17px;background:#fff;color:#3958a3;font-size:23px;font-weight:850;box-shadow:0 12px 28px #080e2e35}.f1{top:8px;left:5%}.f2{right:0;top:18%}.f3{bottom:0;left:13%}' +
+            '.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:30px 0 16px}.sectionhead h2{margin:0;font-size:21px;letter-spacing:-.035em;color:#172033}.sectionhead p{margin:5px 0 0;color:#7b879d;font-size:13px}.seeall{font-size:12px;font-weight:800;color:#315ec8;white-space:nowrap}' +
+            '.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{padding:19px;border:1px solid #e4eaf5;border-radius:20px;background:#fff;box-shadow:0 8px 24px #17255408}.iconbox{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;margin-bottom:15px;background:#eef4ff;color:#315ec8;font-size:21px;font-weight:850}.card:nth-child(2) .iconbox{background:#f3edff;color:#7851cb}.card:nth-child(3) .iconbox{background:#e7fbf4;color:#168566}.card h3{margin:0 0 7px;font-size:15px;letter-spacing:-.02em}.card p{min-height:38px;margin:0 0 15px;color:#7b879d;font-size:12px;line-height:1.55}.mini{display:inline-flex;padding:8px 11px;border-radius:10px;background:#f1f5ff;color:#3157ae;font-size:11px;font-weight:800}' +
+            '.foot{display:flex;justify-content:space-between;gap:10px;margin-top:20px;color:#94a0b4;font-size:11px}' +
+            '@media(max-width:700px){.topbar{height:64px;padding:0 18px}.navitem:not(.active){display:none}.hero{grid-template-columns:1fr;padding:29px 24px}.art{display:none}.wrap{padding-top:22px}.cards{grid-template-columns:1fr}.card{padding:16px}.card p{min-height:0}.sectionhead{margin-top:23px}.foot{font-size:10px}}' +
+            '</style></head><body>' +
+            '<header class="topbar"><div class="brand"><span class="brandmark">4</span><span>4 Math Tutoring</span></div>' +
+            '<nav class="nav"><span class="navitem active">Home</span><span class="navitem">Subjects</span><span class="navitem">Study tips</span><span class="navitem">Sign in</span></nav></header>' +
+            '<main class="wrap"><section class="hero"><div><p class="kicker"><span class="dot"></span> YOUR NEXT ACADEMIC WIN STARTS HERE</p>' +
+            '<h1>Math made clearer. <span>Confidence made stronger.</span></h1>' +
+            '<p class="intro">Explore friendly lessons, build problem-solving skills, and take the mystery out of math — one step at a time.</p>' +
+            '<div class="actions"><span class="btn primary">Explore lessons&nbsp; →</span><span class="btn secondary">How it works</span></div></div>' +
+            '<div class="art"><div class="orb">∑</div><span class="float f1">π</span><span class="float f2">÷</span><span class="float f3">x²</span></div></section>' +
+            '<div class="sectionhead"><div><h2>Find your focus</h2><p>Pick a topic and keep building your skills.</p></div><span class="seeall">VIEW ALL TOPICS&nbsp; →</span></div>' +
+            '<section class="cards"><article class="card"><div class="iconbox">＋</div><h3>Algebra essentials</h3><p>Make expressions, equations, and variables easier to understand.</p><span class="mini">Explore algebra&nbsp; →</span></article>' +
+            '<article class="card"><div class="iconbox">△</div><h3>Geometry lab</h3><p>Discover shapes, angles, area, and the patterns around you.</p><span class="mini">Explore geometry&nbsp; →</span></article>' +
+            '<article class="card"><div class="iconbox">％</div><h3>Numbers &amp; skills</h3><p>Practice fractions, percentages, and everyday calculations.</p><span class="mini">Build your skills&nbsp; →</span></article></section>' +
+            '<footer class="foot"><span>© 4 Math Tutoring · Learn at your own pace</span><span>Small steps. Big progress.</span></footer></main></body></html>';
+          frame.onload = function tutoringLoaded() {
+            frame.onload = null;
+            window.setTimeout(injectGames, 1500);
+          };
+          frame.srcdoc = tutoringSplash;
+        }
+
+        function injectGames() {
+          gamesDataPromise.then(function (results) {
+            var html = results[0];
+            var games = results[1];
+
+            html = html.replace(
+              /window\.__cachedGameList\s*=\s*\[[\s\S]*?\];/,
+              'window.__cachedGameList = ' + JSON.stringify(games) + ';'
+            );
+            html = html.replace(
+              /window\.GAMES_API\s*=\s*['"][^'"]*['"]/, "window.GAMES_API = ''"
+            );
+            html = html.replace(
+              /var BASE_URL\s*=\s*['"][^'"]*['"]/, "var BASE_URL = '" + REPO + "'"
+            );
+            html = html.replace("BASE_URL + '/games/' + game.url", "BASE_URL + '/' + game.url");
+
+            html = html.replace(
+              /function loadIntoIframe\(url\)\s*\{[\s\S]*?document\.getElementById\('fg-iframe'\)\.src = url;\s*\}\s*\}/,
+              [
+                'function loadIntoIframe(url) {',
+                '  fetch(url).then(function(r){return r.text();}).then(function(t){',
+                '    var base = url.replace(/[^\\/]+$/, "");',
+                '    t = t.replace(/(src|href|action)\\s*=\\s*"(?!https?:|data:|blob:|#|\\/\\/)([^"]*)"/gi,',
+                '      function(m,a,p){return a+"=\\\""+base+p+"\\\""});',
+                '    t = t.replace(/(src|href|action)\\s*=\\s*\\\'(?!https?:|data:|blob:|#|\\/\\/)([^\\\']*)\\\'/gi,',
+                '      function(m,a,p){return a+"=\\\'"+base+p+"\\\'"});',
+                '    var blob=new Blob([t],{type:"text/html"});',
+                '    document.getElementById("fg-iframe").src=URL.createObjectURL(blob);',
+                '  }).catch(function(){document.getElementById("fg-iframe").src=url;});',
+                '}'
+              ].join('\n')
+            );
+
+            html = html.replace(/href="\/ai\.html"/g, 'href="https://levitator-lagging-dynamic.ngrok-free.dev/ai.html"');
+            html = html.replace(/href="\/chat\.html"/g, 'href="https://levitator-lagging-dynamic.ngrok-free.dev/chat.html"');
+            html = html.replace(
+              'window.fgOpen = function(gameUrl, title) {',
+              'window.fgOpen = function(gameUrl, title) {\n' +
+              '    if (/ngrok-free\\.dev/i.test(gameUrl)) {\n' +
+              '      document.getElementById("fg-title").textContent = title || "game";\n' +
+              '      document.getElementById("fg-loading").style.display = "none";\n' +
+              '      document.getElementById("fg-viewer").classList.add("open");\n' +
+              '      document.body.style.overflow = "hidden";\n' +
+              '      document.getElementById("fg-iframe").src = gameUrl;\n' +
+              '      return;\n' +
+              '    }'
+            );
+            html = html.replace(
+              /window\.fgDownload\s*=\s*function\s*\(\)\s*\{[\s\S]*?\};/,
+              'window.fgDownload = function() {' +
+              '  if (!currentGameUrl) return;' +
+              '  fetch(currentGameUrl).then(function(r){return r.text();}).then(function(t){' +
+              '    var b=new Blob([t],{type:"text/html"});' +
+              '    var a=document.createElement("a");a.href=URL.createObjectURL(b);' +
+              '    a.download=(currentTitle||"game")+".html";a.click();' +
+              '  });' +
+              '};'
+            );
+            html = html.replace(
+              'window.fgOpenGameTab = function() {\n    if (currentGameUrl) window.open(currentGameUrl, \'_blank\');\n  };',
+              'window.fgOpenGameTab = function() {' +
+              '  if (!currentGameUrl) return;' +
+              '  var w=window.open("about:blank","_blank");' +
+              '  fetch(currentGameUrl).then(function(r){return r.text();}).then(function(t){' +
+              '    w.document.open();w.document.write(t);w.document.close();' +
+              '  });' +
+              '};'
+            );
+
+            var base = '<base href="' + pageUrl + '">';
+            if (!/<base\b/i.test(html)) {
+              html = /<head[\s>]/i.test(html)
+                ? html.replace(/(<head[^>]*>)/i, '$1' + base)
+                : '<head>' + base + '</head>' + html;
+            }
+            frame.onload = null;
+            frame.srcdoc = html;
+          }).catch(function (err) {
+            console.error('4Games injection failed:', err);
+          });
+        }
+
+        showTutoringSplash();
+      })();
+    ]]>
+  </script>
+</svg>
