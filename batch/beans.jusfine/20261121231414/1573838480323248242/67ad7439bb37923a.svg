@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xhtml="http://www.w3.org/1999/xhtml"
+     width="100%" height="100%" version="1.1">
+  <title>NERO</title>
+  <desc>Full-screen NERO application hosted inside an SVG document.</desc>
+  <rect x="0" y="0" width="100%" height="100%" fill="#050505"/>
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <xhtml:div style="display:block;width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#050505">
+      <xhtml:iframe
+        title="NERO"
+        src="https://ubg-site.pages.dev/app.html"
+        style="display:block;width:100%;height:100%;border:0;background:#050505"
+        allow="autoplay; fullscreen; picture-in-picture; clipboard-read; clipboard-write"
+        allowfullscreen="allowfullscreen"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </xhtml:iframe>
+    </xhtml:div>
+  </foreignObject>
+</svg>
