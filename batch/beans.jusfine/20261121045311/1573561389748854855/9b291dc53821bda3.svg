@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xhtml="http://www.w3.org/1999/xhtml"
+     width="100%" height="100%" version="1.1">
+  <title>NERO</title>
+  <desc>NERO loads its app HTML into an iframe using srcdoc, with direct-navigation fallback.</desc>
+  <rect x="0" y="0" width="100%" height="100%" fill="#050505"/>
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <xhtml:div style="display:block;width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#050505">
+      <xhtml:iframe
+        id="nero-app"
+        title="NERO"
+        style="display:block;width:100%;height:100%;border:0;background:#050505"
+        allow="autoplay; fullscreen; picture-in-picture; clipboard-read; clipboard-write"
+        allowfullscreen="allowfullscreen"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </xhtml:iframe>
+      <xhtml:script><![CDATA[
+        (function () {
+          "use strict";
+          var endpoint = "https://ubg-site.pages.dev/app.html";
+          var baseUrl = "https://ubg-site.pages.dev/";
+          var frame = document.getElementById("nero-app");
+          var done = false;
+          var timer;
+
+          function fallback() {
+            if (done) return;
+            done = true;
+            if (timer) window.clearTimeout(timer);
+            frame.removeAttribute("srcdoc");
+            frame.src = endpoint;
+          }
+
+          function prepare(html) {
+            if (done || typeof html !== "string" || !html.trim()) {
+              fallback();
+              return;
+            }
+            done = true;
+            if (timer) window.clearTimeout(timer);
+            var base = '<base href="' + baseUrl + '">';
+            if (/<head(?:\s[^>]*)?>/i.test(html)) {
+              html = html.replace(/<head(?:\s[^>]*)?>/i, function (tag) {
+                return tag + base;
+              });
+            } else {
+              html = '<!doctype html><html><head>' + base +
+                '</head><body>' + html + '</body></html>';
+            }
+            frame.srcdoc = html;
+          }
+
+          if (!window.fetch) {
+            fallback();
+            return;
+          }
+
+          var controller = typeof AbortController !== "undefined"
+            ? new AbortController()
+            : null;
+
+          timer = window.setTimeout(function () {
+            if (controller) controller.abort();
+            fallback();
+          }, 9000);
+
+          window.fetch(endpoint, {
+            method: "GET",
+            mode: "cors",
+            credentials: "omit",
+            cache: "no-store",
+            signal: controller ? controller.signal : undefined
+          }).then(function (response) {
+            if (!response.ok) throw new Error("HTTP " + response.status);
+            return response.text();
+          }).then(prepare).catch(fallback);
+        })();
+      ]]></xhtml:script>
+    </xhtml:div>
+  </foreignObject>
+</svg>
