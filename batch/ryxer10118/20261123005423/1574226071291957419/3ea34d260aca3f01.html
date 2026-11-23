@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Resource</title>
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #0a1c38; color: #f3f7ff; font: 16px system-ui, sans-serif; }
+  iframe { display: block; border: 0; width: 100%; height: 100%; }
+  p { position: absolute; inset: auto 0 45%; text-align: center; margin: 0; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<iframe id="res-frame" title="Resource" allow="autoplay; fullscreen; gamepad; clipboard-write" allowfullscreen></iframe>
+<script>
+window.ResLoader = (function () {
+  var _M = [
+    'aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL25pdHJvY2FyZ2l0L2ZpbGVzQA==',
+    'aHR0cHM6Ly9jZG4uc3RhdGljYWxseS5pby9naC9uaXRyb2NhcmdpdC9maWxlcy8='
+  ];
+  function _d(s) {
+    try { return atob(s); } catch (e) { return ''; }
+  }
+  var MIRRORS = _M.map(_d).filter(Boolean);
+  var STAGGER_MS = 2500;
+  var FETCH_TIMEOUT_MS = 10000;
+  var STORE_KEY = 'nc.res.last';
+  var NEEDS_ARTWORK_FIX = !(navigator.userAgentData);
+
+  function rememberCommit(c) { try { localStorage.setItem(STORE_KEY, c); } catch (e) {} }
+  function recallCommit() {
+    try { var c = localStorage.getItem(STORE_KEY); return /^[0-9a-f]{40}$/.test(c || '') ? c : null; }
+    catch (e) { return null; }
+  }
+  function hostOf(mirror) { return mirror.split('/')[2]; }
+  function pathsFor(mirror, ref) {
+    if (hostOf(mirror).indexOf('statically') >= 0) {
+      var root = mirror.replace(/\/$/, '');
+      return { meta: root + '@main/latest.json', base: root + '@' + ref + '/' };
+    }
+    return { meta: mirror + 'main/latest.json', base: mirror + ref + '/' };
+  }
+
+  var artworkTimer, artworkDocument, artworkSheet, artworkSelectors = [];
+  var artworkData = new Map();
+
+  function updateArtwork(frame) {
+    var doc = frame.contentDocument;
+    if (!doc || !doc.body || !frame.hasAttribute('srcdoc')) return;
+    var styleEl = doc.querySelector('style[data-launcher-artwork]');
+    var sheet = styleEl && styleEl.sheet;
+    if (doc !== artworkDocument || sheet !== artworkSheet) {
+      artworkDocument = doc; artworkSheet = sheet; artworkSelectors = []; artworkData.clear();
+      var collectSelectors = function (rules) {
+        for (var i = 0; i < rules.length; i++) {
+          var rule = rules[i];
+          if (rule.selectorText && rule.style) {
+            var value = rule.style.getPropertyValue('background-image') || rule.style.getPropertyValue('background');
+            var m = value.match(/var\((--lobby-art-[\w-]+)/);
+            if (m) artworkSelectors.push([rule.selectorText, m[1]]);
+          } else if (rule.cssRules) collectSelectors(rule.cssRules);
+        }
+      };
+      if (sheet) collectSelectors(sheet.cssRules);
+    }
+    var tiles = doc.querySelectorAll('.mode-art, .roadster-mode-art, #cq svg.gq');
+    Array.prototype.forEach.call(tiles, function (tile) {
+      var style = doc.defaultView.getComputedStyle(tile);
+      var mapping = artworkSelectors.find(function (s) { return tile.matches(s[0]); });
+      var value = mapping ? doc.documentElement.style.getPropertyValue(mapping[1]) : style.backgroundImage;
+      var um = value.match(/^url\(["']?(blob:[^"')]+)["']?\)$/);
+      var url = um && um[1];
+      var svg = tile.namespaceURI === 'http://www.w3.org/2000/svg';
+      var image = tile.querySelector(':scope > [data-launcher-art]');
+      if (!url) { if (image) image.remove(); return; }
+      if (!image) {
+        image = svg ? doc.createElementNS('http://www.w3.org/2000/svg', 'image') : doc.createElement('img');
+        image.dataset.launcherArt = '';
+        image.setAttribute('aria-hidden', 'true');
+        if (svg) {
+          image.setAttribute('width', '100%'); image.setAttribute('height', '100%');
+          image.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+          image.style.pointerEvents = 'none';
+          tile.prepend(image);
+        } else {
+          image.alt = '';
+          image.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;pointer-events:none;';
+          if (style.position === 'static') tile.style.position = 'relative';
+          tile.append(image);
+        }
+      }
+      if (image.dataset.launcherSource !== url) {
+        image.dataset.launcherSource = url;
+        if (svg) image.setAttribute('href', url); else image.src = url;
+        if (!artworkData.has(url)) {
+          if (artworkData.size >= 64) artworkData.clear();
+          artworkData.set(url, fetch(url).then(function (r) {
+            if (!r.ok) throw new Error('Artwork unavailable');
+            return r.blob();
+          }).then(function (blob) {
+            return new Promise(function (resolve, reject) {
+              var reader = new FileReader();
+              reader.onload = function () { resolve(reader.result); };
+              reader.onerror = function () { reject(reader.error); };
+              reader.readAsDataURL(blob);
+            });
+          }).catch(function () { return null; }));
+        }
+        artworkData.get(url).then(function (data) {
+          if (data && image.isConnected && image.dataset.launcherSource === url) {
+            if (svg) image.setAttribute('href', data); else image.src = data;
+          }
+        });
+      }
+      if (!svg && image.style.objectPosition !== style.backgroundPosition) image.style.objectPosition = style.backgroundPosition;
+    });
+  }
+
+  async function fetchRelease(mirror, controller, knownCommit) {
+    var timer = setTimeout(function () { controller.abort(); }, FETCH_TIMEOUT_MS);
+    try {
+      var commit = knownCommit;
+      if (!commit) {
+        var metaUrl = pathsFor(mirror, 'main').meta;
+        var latest = await fetch(metaUrl, { cache: 'no-store', signal: controller.signal });
+        if (!latest.ok) throw new Error(atob('UmVsZWFzZSBtZXRhZGF0YSB1bmF2YWlsYWJsZSAoSFRUUCAp') + latest.status + ')');
+        commit = (await latest.json()).commit;
+      }
+      if (!/^[0-9a-f]{40}$/.test(commit)) throw new Error(atob('SW52YWxpZCByZWxlYXNlIGNvbW1pdA=='));
+      var base = pathsFor(mirror, commit).base;
+      var response = await fetch(base + 'index.html', { signal: controller.signal });
+      if (!response.ok) throw new Error(atob('UmVzb3VyY2UgZW50cnkgdW5hdmFpbGFibGU='));
+      var html = await response.text();
+      if (!/<head(?:\s[^>]*)?>/i.test(html)) throw new Error(atob('SW52YWxpZCByZXNvdXJjZSBlbnRyeQ=='));
+      var template = document.createElement('template');
+      template.innerHTML = html;
+      var scriptEl = template.content.querySelector('script[type="module"][src]');
+      var styleLink = template.content.querySelector('link[rel="stylesheet"][href]');
+      var modulePath = scriptEl && scriptEl.getAttribute('src');
+      var stylePath = styleLink && styleLink.getAttribute('href');
+      if (!modulePath || !stylePath) throw new Error(atob('UmVzb3VyY2UgYXNzZXRzIG1pc3Npbmc='));
+      var checks = [[modulePath, /(?:javascript|ecmascript)/i], [stylePath, /text\/css/i]];
+      var assets = await Promise.all(checks.map(async function (c, index) {
+        var url = new URL(c[0], base);
+        if (url.href.indexOf(base) !== 0) throw new Error(atob('VW5leHBlY3RlZCByZXNvdXJjZSBwYXRo'));
+        var opts = { method: index === 1 ? 'GET' : 'HEAD', signal: controller.signal };
+        if (index === 1 && styleLink.integrity) opts.integrity = styleLink.integrity;
+        var asset = await fetch(url, opts);
+        if (!asset.ok || !c[1].test(asset.headers.get('content-type') || '')) throw new Error(atob('UmVzb3VyY2UgYXNzZXQgdW5hdmFpbGFibGU='));
+        return index === 1 ? asset.text() : null;
+      }));
+      var artworkRules = '';
+      try {
+        var sheet = new CSSStyleSheet();
+        sheet.replaceSync(assets[1]);
+        var collect = function (rules) {
+          return Array.from(rules, function (rule) {
+            if (rule.selectorText && rule.style) {
+              return ['background-image', 'background'].map(function (property) {
+                var value = rule.style.getPropertyValue(property);
+                return value.includes('--lobby-art-') ? rule.selectorText + '{' + property + ':' + value + ' !important}' : '';
+              }).join('');
+            }
+            if (rule.cssRules) {
+              var inner = collect(rule.cssRules);
+              var open = rule.cssText.indexOf('{');
+              return inner && open > 0 ? rule.cssText.slice(0, open) + '{' + inner + '}' : '';
+            }
+            return '';
+          }).join('');
+        };
+        artworkRules = collect(sheet.cssRules).replace(/<\/style/gi, '<\\/style');
+      } catch (error) {
+        console.warn('Could not prepare menu image compatibility rules:', error);
+      }
+      var headEnd = html.search(/<\/head\s*>/i);
+      if (headEnd < 0) throw new Error(atob('UmVzb3VyY2UgaGVhZCBpcyBpbmNvbXBsZXRl'));
+      var head = html.slice(0, headEnd).replace(/<(?:script|link)\b[^>]*>/gi, function (tag) {
+        return tag.replace(/(\b(?:src|href)\s*=\s*)(["'])([^"']+)\2/i, function (match, prefix, quote, path) {
+          if (/^(?:[a-z][a-z0-9+.-]*:|\/|#|\?)/i.test(path)) return match;
+          var url = new URL(path, base);
+          return url.href.indexOf(base) === 0 ? prefix + quote + url.href + quote : match;
+        });
+      });
+      var finalHtml = (head + html.slice(headEnd)).replace(/<head(?:\s[^>]*)?>/i, function (opening) {
+        return opening + '<base href="' + base + '">' + (artworkRules ? '<style data-launcher-artwork>' + artworkRules + '</style>' : '');
+      });
+      return { html: finalHtml, commit: commit, mirror: mirror };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  function raceMirrors(knownCommit, say) {
+    return new Promise(function (resolve, reject) {
+      var controllers = [], timers = [], details = [], failed = 0, done = false;
+      function finish(settle, value) {
+        if (done) return;
+        done = true;
+        timers.forEach(clearTimeout);
+        controllers.forEach(function (c) { c.abort(); });
+        settle(value);
+      }
+      function launch(i) {
+        if (done || i >= MIRRORS.length || controllers[i]) return;
+        var controller = controllers[i] = new AbortController();
+        say('Checking availability…');
+        fetchRelease(MIRRORS[i], controller, knownCommit).then(function (release) {
+          finish(resolve, release);
+        }, function (e) {
+          if (done) return;
+          details.push(hostOf(MIRRORS[i]) + ': ' + (e && e.message || e));
+          console.warn('Mirror failed:', MIRRORS[i], e);
+          failed++;
+          if (failed === MIRRORS.length) {
+            var err = new Error('All ' + MIRRORS.length + ' mirrors failed');
+            err.details = details;
+            finish(reject, err);
+          } else launch(i + 1);
+        });
+      }
+      for (var i = 1; i < MIRRORS.length; i++) {
+        (function (k) { timers.push(setTimeout(function () { launch(k); }, k * STAGGER_MS)); })(i);
+      }
+      launch(0);
+    });
+  }
+
+  async function findRelease(onStatus) {
+    var say = function (m) { if (onStatus) { try { onStatus(m); } catch (e) {} } };
+    try {
+      var release = await raceMirrors(null, say);
+      rememberCommit(release.commit);
+      return release;
+    } catch (err) {
+      var known = recallCommit();
+      if (!known) throw err;
+      say('Trying previous version…');
+      try { return await raceMirrors(known, say); } catch (e2) {
+        err.details = (err.details || []).map(function (detail) { return 'Latest: ' + detail; })
+          .concat((e2.details || [String(e2)]).map(function (detail) { return 'Remembered version: ' + detail; }));
+        throw err;
+      }
+    }
+  }
+
+  async function load(frame, onStatus) {
+    var release = await findRelease(onStatus);
+    clearInterval(artworkTimer);
+    frame.srcdoc = release.html;
+    if (NEEDS_ARTWORK_FIX) artworkTimer = setInterval(function () { try { updateArtwork(frame); } catch (e) {} }, 1000);
+    return release.html;
+  }
+
+  return { load: load, findRelease: findRelease, mirrors: MIRRORS };
+})();
+
+</script>
+<p id="nc-note">Loading…</p>
+<script>
+  var note0 = document.getElementById('nc-note');
+  window.ResLoader.load(document.getElementById('res-frame'), function (m) { note0.textContent = m; }).then(function () {
+    note0.remove();
+    document.getElementById('res-frame').focus();
+  }).catch(function (error) {
+    console.error('Resource did not load', error);
+    note0.remove();
+    var note = document.createElement('p');
+    note.textContent = 'The resource could not load. Reload and try again.';
+    document.body.replaceChild(note, document.getElementById('res-frame'));
+  });
+</script>
+</body>
+</html>
