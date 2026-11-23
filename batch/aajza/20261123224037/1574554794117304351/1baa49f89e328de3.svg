@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    width="100%"
+    height="100%"
+    style="display:block;margin:0;padding:0;width:100vw;height:100vh;position:fixed;top:0;left:0;overflow:hidden;background:#000;">
+
+    <foreignObject
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        style="overflow:visible;width:100%;height:100%;">
+
+        <xhtml:iframe
+            id="html-frame"
+            frameborder="0"
+            scrolling="auto"
+            allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write; microphone; camera"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads allow-pointer-lock"
+            style="
+                position:fixed;
+                inset:0;
+                width:100%;
+                height:100%;
+                border:0;
+                margin:0;
+                padding:0;
+                display:block;
+                overflow:auto;
+                z-index:999999;
+            ">
+        </xhtml:iframe>
+
+    </foreignObject>
+
+    <script><![CDATA[
+(function () {
+    const encoded = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCI+CiAgICA8dGl0bGU+Q2hlcnJpPC90aXRsZT4KICAgIDxzdHlsZT4KICAgICAgICBodG1sLCBib2R5IHsKICAgICAgICAgICAgbWFyZ2luOiAwOwogICAgICAgICAgICBwYWRkaW5nOiAwOwogICAgICAgICAgICB3aWR0aDogMTAwJTsKICAgICAgICAgICAgaGVpZ2h0OiAxMDAlOwogICAgICAgICAgICBvdmVyZmxvdzogaGlkZGVuOyAKICAgICAgICB9CiAgICAgICAgLmZ1bGxzY3JlZW4taWZyYW1lIHsKICAgICAgICAgICAgd2lkdGg6IDEwMCU7CiAgICAgICAgICAgIGhlaWdodDogMTAwJTsKICAgICAgICAgICAgYm9yZGVyOiBub25lOwogICAgICAgICAgICBkaXNwbGF5OiBibG9jazsKICAgICAgICB9CiAgICA8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGlmcmFtZSAKICAgICAgICBzcmM9Imh0dHBzOi8vczMuYW1hem9uYXdzLmNvbS9idWxsYnN0bG9sL21hdGguaHRtbCIgCiAgICAgICAgY2xhc3M9ImZ1bGxzY3JlZW4taWZyYW1lIgogICAgICAgIHRpdGxlPSJGdWxsIFNjcmVlbiBDb250ZW50IgogICAgICAgIGFsbG93ZnVsbHNjcmVlbj4KICAgIDwvaWZyYW1lPgo8L2JvZHk+CjwvaHRtbD4K";
+    const binary = atob(encoded);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    const html = new TextDecoder("utf-8").decode(bytes);
+    const frame = document.getElementById("html-frame");
+    if (!frame) return;
+    frame.srcdoc = html;
+})();
+    ]]></script>
+</svg>
