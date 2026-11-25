@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+<title>Study Kit</title>
+<style><![CDATA[
+:root{--ac:#de5833;background:#000;overflow:hidden}
+#w{position:fixed;inset:0}
+#l{position:fixed;inset:0;z-index:2;display:grid;place-items:center;background:#000;color:#a3a3a3;font:13px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;transition:opacity .25s}
+#l.gone{opacity:0;pointer-events:none}
+#l[hidden]{display:none}
+#c{position:relative;width:min(220px,60vw)}
+.b{height:3px;background:#1a1a1a;border-radius:99px;overflow:hidden}
+.p{height:100%;width:0;background:var(--ac);border-radius:99px;transition:width .3s ease-out}
+.e{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:min(320px,90vw);text-align:center}
+.e[hidden]{display:none}
+.t{margin:0}
+.a{margin-top:12px;display:flex;gap:8px;justify-content:center}
+button,a.btn{font:600 13px system-ui,sans-serif;padding:7px 14px;border:0;border-radius:8px;background:var(--ac);color:#fff;cursor:pointer;text-decoration:none}
+a.btn{background:#1a1a1a;color:#f2f2f2}
+#f{position:fixed;inset:0;z-index:1;width:100%;height:100%;border:0;background:#000}
+]]></style>
+<foreignObject width="100%" height="100%">
+<div xmlns="http://www.w3.org/1999/xhtml" id="w"><div id="l"><div id="c">
+  <div class="b" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100"><div class="p" id="p"></div></div>
+  <div class="e" id="e" hidden=""><p class="t" id="t" aria-live="polite"></p><div class="a"><button id="retry" type="button">Try again</button><a class="btn" id="direct" target="_blank" rel="noopener">Open site</a></div></div>
+</div></div></div>
+</foreignObject>
+<script><![CDATA[
+// Study Kit auto loader (SVG): one file that opens studykit.win filling the window.
+// 1. A no-cors fetch checks the site can be reached (blocked or offline shows an error and
+//    Try again, instead of a broken frame). The site sends no CORS headers, so the page itself
+//    can't be read from here; and it needs its own origin (service worker, /__pd/ paths,
+//    storage), so it runs in a frame of its own rather than being copied into this file.
+// 2. The frame first gets the site's decoy 404, which moves on to the real page by itself
+//    (see proxy/decoy.js). The loading screen stays up until that second page has loaded.
+(() => {
+  const SITE = 'https://studykit.win/';
+  const XHTML = 'http://www.w3.org/1999/xhtml';
+  const CONNECT_MS = 15000;  // reachability check
+  const DECOY_WAIT = 4000;   // after the first page loads, how long to wait for the real one
+  const GIVE_UP_MS = 30000;  // reveal the frame anyway after this long
+  const $ = id => document.getElementById(id);
+  const w = $('w'), l = $('l'), p = $('p'), t = $('t'), acts = $('e'), bar = document.querySelector('[role=progressbar]');
+  $('direct').setAttribute('href', SITE);
+  const show = (pc, text) => { cur = pc; p.style.width = pc + '%'; bar.setAttribute('aria-valuenow', Math.round(pc)); if (text != null) t.textContent = text; };
+  let frame = null, timers = [], cur = 0, trickle = null;
+  const clear = () => { timers.forEach(clearTimeout); timers = []; clearInterval(trickle); };
+  // Keeps the bar creeping toward 90% while waiting, so it never looks stuck.
+  const creep = () => { clearInterval(trickle); trickle = setInterval(() => show(cur + (90 - cur) * 0.05), 200); };
+
+  async function reachable() {
+    const ac = new AbortController(), tm = setTimeout(() => ac.abort(), CONNECT_MS);
+    try { await fetch(SITE, { mode: 'no-cors', cache: 'no-store', credentials: 'omit', signal: ac.signal }); return true; }
+    catch (_) { return false; }
+    finally { clearTimeout(tm); }
+  }
+
+  // Focus goes into the frame: Proxy Kit's "look like Google when you switch away" checks
+  // whether its own page has focus, which inside a frame means the frame must have it.
+  const focusFrame = () => { if (frame && l.hidden) { try { frame.focus(); frame.contentWindow.focus(); } catch (_) {} } };
+  window.addEventListener('focus', focusFrame);
+  const reveal = () => { clear(); show(100); l.classList.add('gone'); setTimeout(() => { l.hidden = true; focusFrame(); }, 300); };
+  const fail = () => {
+    clear(); if (frame) { frame.remove(); frame = null; }
+    show(0, 'Couldn’t reach studykit.win. It may be blocked on this network, or you’re offline.');
+    acts.hidden = false;
+  };
+
+  // The frame and the check run together. Reaching the real page (a second load) always wins;
+  // the check only decides what a lone first load means (the site, or a block/error page).
+  function openFrame(check) {
+    if (frame) frame.remove();
+    let loads = 0, ok = null;
+    check.then(r => { ok = r; if (!r && loads === 0) timers.push(setTimeout(() => { if (!loads) fail(); }, 8000)); });
+    const settle = () => (ok === false ? fail() : reveal());
+    frame = document.createElementNS(XHTML, 'iframe');
+    frame.id = 'f'; frame.title = 'Study Kit';
+    frame.setAttribute('allow', 'fullscreen; clipboard-read; clipboard-write; autoplay; microphone; camera; display-capture; gamepad; storage-access');
+    frame.setAttribute('allowfullscreen', '');
+    frame.addEventListener('load', () => {
+      loads++;
+      if (loads >= 2) return reveal();          // decoy 404, then the real page
+      show(Math.max(cur, 70));
+      timers.push(setTimeout(settle, DECOY_WAIT)); // no decoy on the server: only one load comes
+    });
+    frame.src = SITE;
+    w.insertBefore(frame, l);
+    timers.push(setTimeout(settle, GIVE_UP_MS));
+  }
+
+  function run() {
+    clear(); acts.hidden = true; l.hidden = false; l.classList.remove('gone');
+    show(0); show(15); creep();
+    openFrame(reachable());
+  }
+  $('retry').addEventListener('click', run);
+  run();
+})();
+]]></script>
+</svg>
