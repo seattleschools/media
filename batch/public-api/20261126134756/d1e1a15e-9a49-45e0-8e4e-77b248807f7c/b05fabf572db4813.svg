@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="100%" height="100%" viewBox="0 0 1440 810" preserveAspectRatio="none">
+  <title id="svg-title">Westbrook High School</title>
+  <rect id="page-background" width="100%" height="100%" fill="#111416"/>
+  <g id="portal-screen" fill="#e9e7df" font-family="Arial,Helvetica,sans-serif">
+    <rect id="school-header" width="100%" height="88" fill="#202426"/>
+    <path d="M0 0h142L68 88H0z" fill="#292e30"/>
+    <path d="M0 0h97L54 27H0z" fill="#87905f"/>
+    <text id="school-name" x="31%" y="42" fill="#e8e4d6" font-family="Georgia,'Times New Roman',serif" font-size="34" font-weight="700">WestBrook High School</text>
+    <text id="school-motto" x="31%" y="70" fill="#c78370" font-size="19" font-weight="600">Lets GO Cougars</text>
+    <line x1="0" y1="88" x2="100%" y2="88" stroke="#353b3d"/>
+    <g id="load-portal" role="button" tabindex="0" aria-label="Load the main portal" style="cursor:pointer">
+      <rect id="load-button" x="20" y="126" width="294" height="61" rx="2" fill="#24292b" stroke="#697174" stroke-width="2"/>
+      <text id="load-label" x="32" y="165" fill="#e5e3db" font-size="22" font-weight="500">Load the <tspan fill="#8fb895" font-weight="600">MAIN PORTAL</tspan></text>
+    </g>
+    <text id="load-status" x="22" y="211" fill="#9ba2a1" font-size="13" aria-live="polite"></text>
+  </g>
+  <foreignObject id="app-viewport" x="0" y="0" width="100%" height="100%" style="display:none">
+    <xhtml:div style="width:100%;height:100%;margin:0">
+      <xhtml:head id="app-head"><xhtml:meta charset="utf-8"/><xhtml:meta name="viewport" content="width=device-width,initial-scale=1"/><xhtml:title>G.GUI</xhtml:title></xhtml:head>
+      <xhtml:body id="app-body" style="width:100%;height:100%;margin:0"></xhtml:body>
+    </xhtml:div>
+  </foreignObject>
+  <script><![CDATA[
+    const HTML_NS = 'http://www.w3.org/1999/xhtml';
+    const GGUI_SOURCES = [
+      window.location.origin + '/',
+      ...[
+        'aHR0cHM6Ly9lZHVjYXRpb24ucGFseXByby5jb20v',
+        'aHR0cHM6Ly9nZ3VpLmVudi5wbS8=',
+        'aHR0cHM6Ly9saW5rbGV0LTNkMjgyZmEwYTJjZS5lbnYucG0v',
+        'aHR0cHM6Ly9saW5rbGV0LTBjYjgzNmVmYzJlZS5lbnYucG0v',
+        'aHR0cHM6Ly9saW5rbGV0LWYzZTRhZDRhNDA2My5lbnYucG0v',
+        'aHR0cHM6Ly9lZHUucnVzdGljcml2ZXJnZWFyLmNvbS8=',
+        'aHR0cHM6Ly9lZHUuc3RyZWV0ZGlyZWN0b3J5LnNnLw==',
+        'aHR0cHM6Ly9lZHVjYXRpb24udHJpYmVvZnR3by5jb20v'
+      ].map(value => atob(value))
+    ];
+    const appHead = document.getElementById('app-head');
+    const appBody = document.getElementById('app-body');
+    const svgTitle = document.getElementById('svg-title');
+    const portalScreen = document.getElementById('portal-screen');
+    const appViewport = document.getElementById('app-viewport');
+    const loadButton = document.getElementById('load-portal');
+    const buttonRect = document.getElementById('load-button');
+    const loadLabel = document.getElementById('load-label');
+    const loadStatus = document.getElementById('load-status');
+    let appTitle = appHead.querySelector('title');
+
+    function fitPage() {
+      const width = window.innerWidth || 1440;
+      const height = window.innerHeight || 810;
+      const buttonX = Math.round(width * 0.036);
+      const buttonY = Math.round(height * 0.39);
+      const buttonWidth = Math.min(430, Math.max(260, width * 0.53));
+      const buttonHeight = height < 400 ? 54 : 61;
+      const titleX = width < 520 ? Math.round(width * 0.29) : Math.round(width * 0.31);
+
+      document.documentElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      buttonRect.setAttribute('x', buttonX);
+      buttonRect.setAttribute('y', buttonY);
+      buttonRect.setAttribute('width', buttonWidth);
+      buttonRect.setAttribute('height', buttonHeight);
+      loadLabel.setAttribute('x', buttonX + 12);
+      loadLabel.setAttribute('y', buttonY + Math.round(buttonHeight * 0.65));
+      loadLabel.setAttribute('font-size', width < 520 ? '18' : '22');
+      loadStatus.setAttribute('x', buttonX + 2);
+      loadStatus.setAttribute('y', buttonY + buttonHeight + 25);
+      document.getElementById('school-name').setAttribute('x', titleX);
+      document.getElementById('school-name').setAttribute('font-size', width < 520 ? '22' : '34');
+      document.getElementById('school-motto').setAttribute('x', titleX + 2);
+      document.getElementById('school-motto').setAttribute('font-size', width < 520 ? '15' : '19');
+    }
+
+    fitPage();
+    window.addEventListener('resize', fitPage);
+    loadButton.addEventListener('mouseenter', () => buttonRect.setAttribute('fill', '#303638'));
+    loadButton.addEventListener('mouseleave', () => {
+      if (loadButton.getAttribute('aria-disabled') !== 'true') buttonRect.setAttribute('fill', '#24292b');
+    });
+
+    Object.defineProperty(document, 'head', { configurable: true, get: () => appHead });
+    Object.defineProperty(document, 'body', { configurable: true, get: () => appBody });
+    Object.defineProperty(document, 'title', {
+      configurable: true,
+      get: () => appTitle.textContent,
+      set: value => { appTitle.textContent = value; svgTitle.textContent = value; }
+    });
+    document.createElement = name => document.createElementNS(HTML_NS, name);
+
+    const nativeInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+    Object.defineProperty(Element.prototype, 'innerHTML', {
+      configurable: true,
+      enumerable: nativeInnerHTML.enumerable,
+      get() { return nativeInnerHTML.get.call(this); },
+      set(markup) {
+        if (this.namespaceURI !== HTML_NS) return nativeInnerHTML.set.call(this, markup);
+        const parsed = new DOMParser().parseFromString(`<body>${markup}</body>`, 'text/html');
+        this.replaceChildren(...[...parsed.body.childNodes].map(node => document.importNode(node, true)));
+      }
+    });
+
+    const nativeInsertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+    Element.prototype.insertAdjacentHTML = function(position, markup) {
+      if (this.namespaceURI !== HTML_NS) return nativeInsertAdjacentHTML.call(this, position, markup);
+      const parsed = new DOMParser().parseFromString(`<body>${markup}</body>`, 'text/html');
+      const nodes = [...parsed.body.childNodes].map(node => document.importNode(node, true));
+      switch (position.toLowerCase()) {
+        case 'beforebegin': this.before(...nodes); break;
+        case 'afterbegin': this.prepend(...nodes); break;
+        case 'beforeend': this.append(...nodes); break;
+        case 'afterend': this.after(...nodes); break;
+        default: throw new DOMException('Invalid position', 'SyntaxError');
+      }
+    };
+
+    function fixUrl(element, attribute, base) {
+      const value = element.getAttribute(attribute);
+      if (value && !/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(value)) {
+        element.setAttribute(attribute, new URL(value, base).href);
+      }
+    }
+
+    function mountPage(html, base) {
+      const parsed = new DOMParser().parseFromString(html, 'text/html');
+      const scripts = [...parsed.querySelectorAll('script')].filter(script => !script.textContent.includes('openCloakedPage'));
+      parsed.querySelectorAll('script').forEach(script => script.remove());
+
+      appHead.replaceChildren(...[...parsed.head.childNodes].map(node => document.importNode(node, true)));
+      appTitle = appHead.querySelector('title') || document.createElement('title');
+      if (!appTitle.parentNode) appHead.append(appTitle);
+      appTitle.textContent = parsed.title || 'G.GUI';
+      svgTitle.textContent = appTitle.textContent;
+      appHead.parentElement.lang = parsed.documentElement.lang || 'en';
+      appBody.removeAttribute('style');
+      appBody.replaceChildren(...[...parsed.body.childNodes].map(node => document.importNode(node, true)));
+      portalScreen.style.display = 'none';
+      appViewport.style.display = 'block';
+      appHead.querySelectorAll('[href]').forEach(element => fixUrl(element, 'href', base));
+      appBody.querySelectorAll('[href], [src], [action], [poster]').forEach(element => {
+        for (const attribute of ['href', 'src', 'action', 'poster']) fixUrl(element, attribute, base);
+      });
+
+      return scripts.reduce((chain, sourceScript) => chain.then(() => new Promise(resolve => {
+        const script = document.createElement('script');
+        for (const attribute of sourceScript.attributes) script.setAttribute(attribute.name, attribute.value);
+        const source = sourceScript.getAttribute('src');
+        if (source) {
+          script.src = new URL(source, base).href;
+          script.async = false;
+          script.onload = resolve;
+          script.onerror = resolve;
+        } else {
+          script.textContent = sourceScript.textContent;
+          resolve();
+        }
+        (sourceScript.parentElement === parsed.head ? appHead : appBody).append(script);
+      })), Promise.resolve());
+    }
+
+    async function findSource() {
+      loadButton.setAttribute('aria-disabled', 'true');
+      loadButton.style.cursor = 'wait';
+      loadButton.style.opacity = '.72';
+      buttonRect.setAttribute('fill', '#24292b');
+      loadLabel.textContent = 'Finding a source…';
+      loadStatus.textContent = 'Finding an unblocked G.GUI source';
+      const failures = [];
+      const sourceChecks = Promise.all(GGUI_SOURCES.map(async source => {
+        try {
+          const response = await fetch(source, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const html = await response.text();
+          if (!/<(?:!doctype\s+html|html\b)/i.test(html)) throw new Error('Not an HTML page');
+          if (/beta testers only|beta access/i.test(html) && !/^https?:\/\/education\.palypro\.com\//i.test(location.href)) {
+            throw new Error('Beta login required');
+          }
+          return { html, base: new URL('.', response.url || source).href };
+        } catch (error) {
+          failures.push(`${source} — ${error.message}`);
+          return null;
+        }
+      })).then(sources => sources.filter(Boolean));
+      const [available] = await Promise.all([
+        sourceChecks,
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ]);
+
+      if (!available.length) {
+        loadButton.removeAttribute('aria-disabled');
+        loadButton.style.cursor = 'pointer';
+        loadButton.style.opacity = '1';
+        buttonRect.setAttribute('fill', '#24292b');
+        loadLabel.textContent = 'Try again';
+        loadStatus.textContent = 'Couldn’t connect. Check your connection and try again.';
+        return;
+      }
+
+      let next = 0;
+      try {
+        next = Number(localStorage.getItem('ggui-source-next') || 0) % available.length;
+        localStorage.setItem('ggui-source-next', String((next + 1) % available.length));
+      } catch {}
+
+      await mountPage(available[next].html, available[next].base);
+      document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
+      window.dispatchEvent(new Event('load'));
+    }
+
+    function startLoading() {
+      if (loadButton.getAttribute('aria-disabled') === 'true') return;
+      findSource().catch(() => {
+        loadButton.removeAttribute('aria-disabled');
+        loadButton.style.cursor = 'pointer';
+        loadButton.style.opacity = '1';
+        buttonRect.setAttribute('fill', '#24292b');
+        loadLabel.textContent = 'Try again';
+        loadStatus.textContent = 'Couldn’t connect. Check your connection and try again.';
+      });
+    }
+    loadButton.addEventListener('click', startLoading);
+    loadButton.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        startLoading();
+      }
+    });
+  ]]></script>
+</svg>
