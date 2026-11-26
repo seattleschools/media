@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" style="display:block">
+<title>Alasis</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#0b0d12;color:#eef1f7;overflow:hidden;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+#app{position:fixed;inset:0;width:100%;height:100%;border:0;display:none;background:#0b0d12}
+#app.ready{display:block}#boot{position:fixed;inset:0;display:grid;place-content:center;justify-items:center;gap:16px;text-align:center;padding:24px}#boot.gone{display:none}
+.spinner{width:42px;height:42px;border:4px solid rgba(255,255,255,.15);border-top-color:#fff;border-radius:50%;animation:spin .85s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.msg{color:#9aa4b5;font-size:13.5px;letter-spacing:.2px}.err{color:#ffb6b6;font-size:14px;max-width:520px;line-height:1.55}
+.retry{margin-top:6px;padding:10px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#eef1f7;font:inherit;font-size:13.5px;cursor:pointer}
+</style>
+<foreignObject width="100%" height="100%">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="title" content="Alasis"/>
+<meta name="description" content="Alasis single-file endpoint loader"/>
+<title>Alasis</title>
+</head>
+<body>
+<div id="boot"><div class="spinner"></div><div class="msg" id="bootMsg">Loading Alasis…</div></div>
+<iframe id="app" title="Alasis" allow="autoplay; fullscreen; pointer-lock; gamepad; clipboard-read; clipboard-write" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-pointer-lock allow-orientation-lock allow-modals allow-downloads"></iframe>
+<script><![CDATA[
+(()=>{
+'use strict';
+const ENDPOINTS_B64=['aHR0cHM6Ly9sb2dpbi5pLXJlYWR5LmNvbS5hbGFzaXMucG9ydGFsLW5ldHdvcmsuY29t','aHR0cHM6Ly9hbGFzaXMuY2MuY2Qv','aHR0cHM6Ly9sb2dpbi5pLXJlYWR5LmNvbS5hbGFzaXMuY2MuY2Q='];
+const ENDPOINTS=ENDPOINTS_B64.map(v=>atob(v));
+const CACHE_KEY='alasis_endpoint_html_cache_v1';
+const boot=document.getElementById('boot'),app=document.getElementById('app');
+function showError(reason){boot.classList.remove('gone');app.classList.remove('ready');boot.replaceChildren();const e=document.createElement('div');e.className='err';e.textContent='Couldn’t load Alasis. '+reason;const b=document.createElement('button');b.className='retry';b.textContent='Try again';b.addEventListener('click',load);boot.append(e,b)}
+function inject(html,base){const b=base.replace(/&/g,'&amp;').replace(/"/g,'&quot;');if(!/<base\b/i.test(html)){if(/<head([^>]*)>/i.test(html))html=html.replace(/<head([^>]*)>/i,`<head$1><base href="${b}">`);else html=`<base href="${b}">`+html}app.removeAttribute('src');app.srcdoc=html;app.classList.add('ready');boot.classList.add('gone');document.title='Alasis'}
+function getCache(){try{return JSON.parse(localStorage.getItem(CACHE_KEY)||'null')}catch{return null}}
+function setCache(v){try{localStorage.setItem(CACHE_KEY,JSON.stringify(v))}catch{}}
+async function fetchEndpoint(url){const c=new AbortController(),t=setTimeout(()=>c.abort(),8000);try{const r=await fetch(url,{cache:'no-store',credentials:'omit',signal:c.signal});if(!r.ok)throw Error('HTTP '+r.status);const h=await r.text();if(!h||h.length<50)throw Error('Empty response');return h}finally{clearTimeout(t)}}
+async function refresh(start){for(let i=start;i<ENDPOINTS.length;i++){try{const h=await fetchEndpoint(ENDPOINTS[i]);setCache({url:ENDPOINTS[i],html:h});return}catch{}}}
+function directFallback(start){const urls=ENDPOINTS.slice(start).concat(ENDPOINTS.slice(0,start));let i=0,done=false,t;function next(){if(i>=urls.length){clearTimeout(t);showError('All configured endpoints failed to respond.');return}done=false;app.classList.remove('ready');app.removeAttribute('srcdoc');app.onload=()=>{if(done)return;done=true;clearTimeout(t);app.classList.add('ready');boot.classList.add('gone')};app.onerror=()=>{if(done)return;done=true;clearTimeout(t);next()};app.src=urls[i++];t=setTimeout(()=>{if(done)return;done=true;next()},9000)}next()}
+async function load(){boot.classList.remove('gone');boot.innerHTML='<div class="spinner"></div><div class="msg" id="bootMsg">Loading Alasis…</div>';const m=document.getElementById('bootMsg'),cache=getCache();if(cache&&cache.html&&cache.html.length>50&&cache.url){inject(cache.html,cache.url);refresh(Math.max(0,ENDPOINTS.indexOf(cache.url)));return}for(let i=0;i<ENDPOINTS.length;i++){m.textContent=i?'Trying alternate endpoint ('+(i+1)+'/'+ENDPOINTS.length+')…':'Connecting to Alasis…';try{const h=await fetchEndpoint(ENDPOINTS[i]);setCache({url:ENDPOINTS[i],html:h});inject(h,ENDPOINTS[i]);refresh((i+1)%ENDPOINTS.length);return}catch{}}m.textContent='Trying direct connection…';directFallback(0)}
+load();
+})();
+]]></script>
+</body>
+</html>
+</foreignObject>
+</svg>
